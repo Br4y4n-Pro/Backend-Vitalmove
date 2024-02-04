@@ -1,11 +1,14 @@
-const { Pool } = require('pg');
-const { CONFIG_DB } = require('../config/db');
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
+
+import pkg from 'pg';
+const { Pool } = pkg;
+import { CONFIG_DB } from '../config/db.js'
 
 
 const pool = new Pool(CONFIG_DB);
 
-async function getPgVersion() {
+export async function getPgVersion() {
     const client = await pool.connect();
     try {
       const result = await client.query('SELECT version()');
@@ -13,9 +16,6 @@ async function getPgVersion() {
     } finally {
       client.release();
     }
-  }
+  };
   
 
-  module.exports ={
-    getPgVersion
-  }

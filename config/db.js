@@ -1,7 +1,7 @@
 let { PGHOST, PGDATABASE, PGUSER, PGPASSWORD } = process.env;
 
 
-const CONFIG_DB = {
+export const CONFIG_DB = {
     host: PGHOST,
     database: PGDATABASE,
     username: PGUSER,
@@ -10,8 +10,5 @@ const CONFIG_DB = {
     ssl: {
       require: true,
     }
-}
+};
 
-module.exports = {
-    CONFIG_DB,
-}
