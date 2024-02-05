@@ -3,31 +3,38 @@
 import { addUSerNewModel } from "../models/vitalMoveModel.js";
 
 
-export const addUserNew = async (req,res) =>{
+
+
+export const addUserNew = async (req, res) => {
     console.log('Recibiendo solicitud POST en addUserNew');
-    console.log(res.body)
+    console.log(res.body);
+    console.log(res.file);
     try {
 
-        //VALIDAR EXISTENCIA DE USUARIO
-
-        const newUser = addUSerNewModel(req.body);
-
-        if(newUser){
-            res
-            .status(201)
-            .json({ mensaje: "usuario registrado exitosamente" });
-        }else{
-            res
-            .status(401)
-            .json({ mensaje: "no se pudo guardar en la base de datos" });
-        }
-
+  
+      const newUser = await addUSerNewModel(req.body, req.file);
+      console.log(`este es el controlador y lo que obtuvo del modelo es ${newUser}`);
+  
+      if (newUser instanceof Error) {
+        res.status(401).json({  error: newUser.message });
+      } else if (newUser) {
+        res.status(201).json({ mensaje: "Usuario registrado exitosamente" });
+      } else {
+        res.status(401).json({ error: newUser.message });
+      }
     } catch (error) {
-        console.error("Error al agregar Usuario", error);
-        res
-          .status(500)
-          .json({ mensaje: "Error al agregar usuario" });
+      console.error("Error al agregar Usuario", error);
+      res.status(500).json({ mensaje: "Error al agregar usuario" });
     }
+  };
+
+export const muestra = async (req,res) => {
+ const  body = await req.body;
+  console.log(body)
+  console.log("--------------------------------------")
+  const file = await req.file
+  console.log(file)
+  res.sendStatus(200);
 };
 
 export const principal = (req, res) => {
