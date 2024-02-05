@@ -1,10 +1,9 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
-//Usar Bcrypt aca
 
 //<<------------- FALTA CREAR LAS VALIDACIONES DE LA CREACION DE USUARIO------------------->> ✅ HECHO
+//<<------------- FALTA CREAR LA RUTA DE LA IMAGEN A ALMACENAR------------------->> ✅ HECHO
 
+import dotenv from 'dotenv';
+dotenv.config();
 import pkg from 'pg';
 const { Pool } = pkg;
 import { CONFIG_DB } from '../config/db.js'
@@ -12,6 +11,7 @@ import bcrypt from "bcrypt";
 
 const pool = new Pool(CONFIG_DB);
 
+// Prueba de conexion a la base de datos
 export const  getPgVersion = async ( ) => {
     const client = await pool.connect();
     try {
@@ -24,8 +24,9 @@ export const  getPgVersion = async ( ) => {
   
 
 
-  export const addUSerNewModel = async ( data ) =>{
+  export const addUSerNewModel = async ( data,file ) =>{
     console.log('Modelo: Agregando usuario', data);
+    console.log('Imagen: agregando ruta de imagen', file);
     const {
       actividad_semana,
       alergias,
@@ -76,35 +77,7 @@ export const  getPgVersion = async ( ) => {
       VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20
         );`;
-        
-        
-        const hash_contrasena = await bcrypt.hash(contrasena,10);
-console.log('-----------------------------------------------------------')
-          console.log(hash_contrasena)
 
-          
-    const valuesQuery = [ 
-      actividad_semana,
-      alergias,
-      apellidos,
-      hash_contrasena,
-      dni,
-      dependencia,
-      direccion,
-      eps,
-      fecha_nacimiento,
-      grupo,
-      nivel_semana,
-      nombre_emergencia,
-      parentesco,
-      rh,
-      rol,
-      talla,
-      telefono_emergencia,
-      genero,
-      img_perfil,
-      nombres
-];
 
 
 const requiredValues =[
@@ -134,7 +107,34 @@ if (requiredValues.some(value => value == null || value === "")) {
 if ( await validateDniExist(dni)) {
     return new Error("El numero de DNI ya esta registrado")
 }
-// uso de bcrypt para cifrar la contraseña
+
+ // uso de bcrypt para cifrar la contraseña    
+ const hash_contrasena = await bcrypt.hash(contrasena,10);
+ console.log('-----------------------------------------------------------')
+ console.log(hash_contrasena)
+
+    const valuesQuery = [ 
+      actividad_semana,
+      alergias,
+      apellidos,
+      hash_contrasena,
+      dni,
+      dependencia,
+      direccion,
+      eps,
+      fecha_nacimiento,
+      grupo,
+      nivel_semana,
+      nombre_emergencia,
+      parentesco,
+      rh,
+      rol,
+      talla,
+      telefono_emergencia,
+      genero,
+      img_perfil,
+      nombres
+    ];
 
   const result = await pool.query( sqlQuery , valuesQuery );
   
@@ -153,7 +153,7 @@ if ( await validateDniExist(dni)) {
 
 
 
-  //------------------------------------------------
+//------------------------------------------------
 //-----------------VALIDATES----------------------
 //------------------------------------------------
 

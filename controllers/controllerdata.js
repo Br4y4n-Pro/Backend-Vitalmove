@@ -2,19 +2,17 @@
 
 import { addUSerNewModel } from "../models/vitalMoveModel.js";
 
-
-
-
 export const addUserNew = async (req, res) => {
     console.log('Recibiendo solicitud POST en addUserNew');
-    console.log(res.body);
-    console.log(res.file);
+   const body =  req.body;
+   const fileImagen =  req.file;
     try {
 
-  
-      const newUser = await addUSerNewModel(req.body, req.file);
-      console.log(`este es el controlador y lo que obtuvo del modelo es ${newUser}`);
-  
+      const newUser = await addUSerNewModel(body , fileImagen);
+      console.log(`este es el controlador y lo que obtuvo del modelo es`);
+      console.log(body);
+      console.log(fileImagen);
+
       if (newUser instanceof Error) {
         res.status(401).json({  error: newUser.message });
       } else if (newUser) {
@@ -27,6 +25,7 @@ export const addUserNew = async (req, res) => {
       res.status(500).json({ mensaje: "Error al agregar usuario" });
     }
   };
+
 
 export const muestra = async (req,res) => {
  const  body = await req.body;
