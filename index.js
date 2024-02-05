@@ -7,8 +7,7 @@ import { getPgVersion } from './models/vitalMoveModel.js';
 import  routers from './routes/vitalRoutes.js';
 import { publicPath } from './models/multerconfig.js';
 
-
-app.use("/public", Express.static(path.join(__dirname, "public")));
+app.use('/public', Express.static((publicPath)));
 app.use(cors());
 app.use(bodyParser.json());
 app.use('/',routers);
