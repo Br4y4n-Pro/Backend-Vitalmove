@@ -1,9 +1,3 @@
-
-//<<------------- FALTA CREAR LAS VALIDACIONES DE LA CREACION DE USUARIO------------------->> ✅ HECHO
-//<<------------- FALTA CREAR LA RUTA DE LA IMAGEN A ALMACENAR------------------->> ✅ HECHO
-//<<------------- LAS VALIDACIONES DE EL ADDUSERNEWMODEL SON:
-//<<------------- DNI NO ESTE USADO 
-//<<------------- NO HAYA CAMPOS VACIOS DE LOS QUE SON NECESARIOS
 import dotenv from 'dotenv';
 dotenv.config();
 import pkg from 'pg';
@@ -23,8 +17,7 @@ export const  getPgVersion = async ( ) => {
       client.release();
     }
   };
-
-  export const addUSerNewModel = async ( data,file ) =>{
+export const addUSerModel = async ( data,file ) =>{
 
     const {
       actividad_semana,
@@ -99,11 +92,11 @@ const requiredValues =[
 console.log(requiredValues);
 
 if (requiredValues.some(value => value == null || value === "")) {
-  return new Error("No se puede guardar: valor nulo, indefinido o cadena vacía no permitido");
+  throw new Error("No se puede guardar: valor nulo, indefinido o cadena vacía no permitido");
 }
 
 if ( await validateDniExist(dni)) {
-  return new Error("El numero de DNI ya esta registrado")
+  throw new Error("El numero de DNI ya esta registrado")
 }
 
  // uso de bcrypt para cifrar la contraseña    
@@ -152,6 +145,49 @@ if ( await validateDniExist(dni)) {
       throw error;
    }
   };
+export const loginUSerModel = async ( data ) => {
+try {
+  const {dni,contrasena} = data
+  
+  
+  if (await validateDniExist(dni)) {
+  const result = await pool.query("SELECT dni,contrasena FROM usuario WHERE dni = $1",[dni])
+    const datos = result.rows[0]
+    const compareContrasena = await bcrypt.compare(contrasena,datos.contrasena)
+    if(!compareContrasena){
+      throw new Error("La contraseña proporcionada no coinciden")
+    }
+    return true 
+}else{
+  throw new Error("El dni que se ingreso no esta registrado en nuestro servicios")
+}
+
+} catch (error) {
+  console.error("Error al registrar el usuario", error);
+      throw error;
+}
+};
+
+
+
+
+
+
+export const searchUserModel = async ( dni ) =>{
+        
+  try {
+    const query = "SELECT actividad_semana,alergias,apellidos,dni,dependencia,direccion,eps,fecha_nacimiento,grupo,nivel_semana,nombre_emergencia,parentesco,rh,rol,talla,telefono_emergencia,genero,nombres FROM usuario WHERE dni = $1";
+    const value = [dni];
+
+    const result = await pool.query( query,value);
+    console.log(result.rows[0])
+    return result.rows[0]
+    } catch (error) {
+      console.error("Error al consultar el usuario", error);
+      throw error;
+    }
+  };
+
 
 //------------------------------------------------
 //-----------------VALIDATES----------------------
@@ -161,7 +197,7 @@ const validateDniExist = async ( dniToRegister ) =>{
   const result = await pool.query( 'SELECT dni FROM usuario where dni = $1', [dniToRegister] )   
   try {
     if (result.rows.length === 1) {
-      return result.rows;
+      return true;
     } else {
       return null; //no se encontro el dni
     }
