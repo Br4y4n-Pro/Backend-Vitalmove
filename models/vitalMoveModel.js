@@ -1,7 +1,9 @@
 
 //<<------------- FALTA CREAR LAS VALIDACIONES DE LA CREACION DE USUARIO------------------->> ✅ HECHO
 //<<------------- FALTA CREAR LA RUTA DE LA IMAGEN A ALMACENAR------------------->> ✅ HECHO
-
+//<<------------- LAS VALIDACIONES DE EL ADDUSERNEWMODEL SON:
+//<<------------- DNI NO ESTE USADO 
+//<<------------- NO HAYA CAMPOS VACIOS DE LOS QUE SON NECESARIOS
 import dotenv from 'dotenv';
 dotenv.config();
 import pkg from 'pg';
@@ -21,12 +23,9 @@ export const  getPgVersion = async ( ) => {
       client.release();
     }
   };
-  
-
 
   export const addUSerNewModel = async ( data,file ) =>{
-    console.log('Modelo: Agregando usuario', data);
-    console.log('Imagen: agregando ruta de imagen', file);
+
     const {
       actividad_semana,
       alergias,
@@ -46,10 +45,10 @@ export const  getPgVersion = async ( ) => {
       talla,
       telefono_emergencia,
       genero,
-      img_perfil,
       nombres
     } = data;
     
+    const {filename} = file
     
     const sqlQuery = `
     INSERT INTO usuario (
@@ -79,7 +78,6 @@ export const  getPgVersion = async ( ) => {
         );`;
 
 
-
 const requiredValues =[
   actividad_semana,
   alergias,
@@ -97,21 +95,23 @@ const requiredValues =[
   telefono_emergencia,
   genero,
   nombres
-]
-
+];
+console.log(requiredValues);
 
 if (requiredValues.some(value => value == null || value === "")) {
   return new Error("No se puede guardar: valor nulo, indefinido o cadena vacía no permitido");
 }
 
 if ( await validateDniExist(dni)) {
-    return new Error("El numero de DNI ya esta registrado")
+  return new Error("El numero de DNI ya esta registrado")
 }
 
  // uso de bcrypt para cifrar la contraseña    
  const hash_contrasena = await bcrypt.hash(contrasena,10);
  console.log('-----------------------------------------------------------')
  console.log(hash_contrasena)
+  console.log(filename)
+ const link_imagen = filename;
 
     const valuesQuery = [ 
       actividad_semana,
@@ -132,9 +132,11 @@ if ( await validateDniExist(dni)) {
       talla,
       telefono_emergencia,
       genero,
-      img_perfil,
+      link_imagen,
       nombres
     ];
+
+    console.log(valuesQuery);
 
   const result = await pool.query( sqlQuery , valuesQuery );
   
@@ -150,8 +152,6 @@ if ( await validateDniExist(dni)) {
       throw error;
    }
   };
-
-
 
 //------------------------------------------------
 //-----------------VALIDATES----------------------

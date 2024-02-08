@@ -1,0 +1,164 @@
+openapi: 3.0.3
+info:
+  title: VitalMove - API
+  x-logo:
+    url: "https://static-00.iconduck.com/assets.00/node-js-icon-1817x2048-g8tzf91e.png"
+    altText: "Logo de la API"
+    title: "VitalMove - API"
+  description: |
+    VitalMove es una aplicación móvil y web para el seguimiento de datos y tests físicos para adultos mayores. La aplicación ofrece una variedad de funciones para ayudar a los usuarios a alcanzar sus objetivos de salud. Esta API proporciona acceso a la base de datos de VitalMove, permitiendo la creación, actualización y consulta de información de usuarios, tests y otros datos relevantes.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:3050/
+tags:
+  - name: Usuarios
+    description: Todo sobre los endpoints que involucra al usuario
+  - name: Tests
+    description: Ingreso y consulta de los tests realizados
+paths:
+  /userAdd:
+    post:
+      tags: 
+        - Usuarios
+      summary: Registrar un nuevo usuario
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                actividad_semana:
+                  type: string
+                  maxLength: 200
+                alergias:
+                  type: string
+                  maxLength: 200
+                apellidos:
+                  type: string
+                  maxLength: 200
+                contrasena:
+                  type: string
+                  maxLength: 200
+                dni:
+                  type: string
+                  maxLength: 13
+                dependencia:
+                  type: string
+                  maxLength: 200
+                direccion:
+                  type: string
+                  maxLength: 200
+                eps:
+                  type: string
+                  maxLength: 200
+                fecha_nacimiento:
+                  type: string
+                  format: date
+                grupo:
+                  type: string
+                  maxLength: 200
+                nivel_semana:
+                  type: string
+                  maxLength: 200
+                nombre_emergencia:
+                  type: string
+                  maxLength: 200
+                parentesco:
+                  type: string
+                  maxLength: 200
+                rh:
+                  type: string
+                  maxLength: 200
+                rol:
+                  type: string
+                  maxLength: 200
+                talla:
+                  type: string
+                  maxLength: 10
+                telefono_emergencia:
+                  type: string
+                  maxLength: 10
+                genero:
+                  type: string
+                  enum: [masculino, femenino, otro]
+                img_perfil:
+                  type: string
+                  format: binary
+          application/json:
+            schema:
+              type: object
+              properties:
+                actividad_semana:
+                  type: string
+                  maxLength: 200
+                alergias:
+                  type: string
+                  maxLength: 200
+                apellidos:
+                  type: string
+                  maxLength: 200
+                contrasena:
+                  type: string
+                  maxLength: 200
+                dni:
+                  type: string
+                  maxLength: 13
+                dependencia:
+                  type: string
+                  maxLength: 200
+                direccion:
+                  type: string
+                  maxLength: 200
+                eps:
+                  type: string
+                  maxLength: 200
+                fecha_nacimiento:
+                  type: string
+                  format: date
+                grupo:
+                  type: string
+                  maxLength: 200
+                nivel_semana:
+                  type: string
+                  maxLength: 200
+                nombre_emergencia:
+                  type: string
+                  maxLength: 200
+                parentesco:
+                  type: string
+                  maxLength: 200
+                rh:
+                  type: string
+                  maxLength: 200
+                rol:
+                  type: string
+                  maxLength: 200
+                talla:
+                  type: string
+                  maxLength: 10
+                telefono_emergencia:
+                  type: string
+                  maxLength: 10
+                genero:
+                  type: string
+                  enum: [masculino, femenino, otro]
+                img_perfil:
+                  type: string
+                  format: binary
+      responses:
+        '401':
+          description: 'No se puede guardar: valor nulo, indefinido o cadena vacía no permitido ò El numero de DNI ya esta registrado'
+        '201':
+          description: Usuario registrado exitosamente
+        '500':
+          description: Error del servidor

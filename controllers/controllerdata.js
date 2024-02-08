@@ -10,8 +10,7 @@ export const addUserNew = async (req, res) => {
 
       const newUser = await addUSerNewModel(body , fileImagen);
       console.log(`este es el controlador y lo que obtuvo del modelo es`);
-      console.log(body);
-      console.log(fileImagen);
+      console.log(newUser);
 
       if (newUser instanceof Error) {
         res.status(401).json({  error: newUser.message });
@@ -21,8 +20,7 @@ export const addUserNew = async (req, res) => {
         res.status(401).json({ error: newUser.message });
       }
     } catch (error) {
-      console.error("Error al agregar Usuario", error);
-      res.status(500).json({ mensaje: "Error al agregar usuario" });
+      res.status(500).json({ mensaje: "Error del servidor" });
     }
   };
 
