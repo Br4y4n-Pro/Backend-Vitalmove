@@ -1,8 +1,8 @@
+// Configuraciòn de Multer para guardar archivos en una carpeta
 import { fileURLToPath } from 'url';
 import multer, { diskStorage } from "multer";
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path'; 
-// Configura Multer para guardar archivos en una carpeta
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -16,13 +16,12 @@ const storage = diskStorage({
     destination: path.join(publicPath),
     filename: (req, file, cb) => {
       cb(null, uuidv4() + path.extname(file.originalname).toLowerCase());
-     
     },
   });
   
 
 
-  export const upload =
+  export const uploadDisk =
     multer({
       storage,  //<--- se usa el storage aqui
       dest: path.join(publicPath), //<-- carpeta donde se va a guardar
@@ -36,3 +35,9 @@ const storage = diskStorage({
         cb("Error: Archivo no soportado",error);
       },
     }).single("img_perfil")
+
+
+    
+  // Multer para MemoryStorage
+  const storageBuffer = multer.memoryStorage(); // multer almacena el archivo de forma temporal.
+  export const uploadBuffer = multer({ storage: storageBuffer }).single('img_perfil');

@@ -4,18 +4,28 @@
 // PARA EL LOGIN VA A SER DOS PARAMETROS PERO SE PASARAN POR UN JSON BODY DONDE CONTENDRFA LA CONTRASEÑA Y EL USUARIO ES DECIR DNI HECHO
 
 // PARA EL BUSCADOR SE VA A DAR DOS PARAMETROS DNI Y NOMBRE Y VA A SER UNA QUERY PARA MAS RAPIDEZ
+import { uploadImagenS3Model } from "../models/s3.js";
 import { addUserModel, loginUserModel, searchUserModel, getAllUsersModel,deleteUserModel, updateUserModel } from "../models/vitalMoveModel.js";
 
 export const addUserNew = async ( req, res ) => {
     console.log('Recibiendo solicitud POST en addUserNew');
    const body =  req.body;
-   const fileImagen =  req.file;
+   if (!req.file) {
+    return res.status(400).json({ mensaje: "No se ha seleccionado ningún archivo." });
+  }
+  
+
+   const urlImagen = await uploadImagenS3Model(req.file);
+
     try {
 
-      const newUser = await addUserModel(body , fileImagen);
+      const newUser = await addUserModel(body , urlImagen);
       console.log(`este es el controlador y lo que obtuvo del modelo es`);
       console.log(newUser);
 
+      if (newUser === null) {
+        res.status(401).json({  error: "No se pudo crear el usuario" });
+      }
       if (newUser instanceof Error) {
         res.status(401).json({  error: newUser.message });
       } else {
@@ -92,4 +102,3 @@ export const searchUsers = async (req,res) => {
     res.status(500).json({ error: error.message });
     }
 }
-

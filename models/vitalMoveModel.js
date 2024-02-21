@@ -18,7 +18,7 @@ export const  getPgVersion = async ( ) => {
     }
   };
 
-export const addUserModel = async (data, file) => {
+export const addUserModel = async (data, linkImagen) => {
   const {
     actividad_semana,
     alergias,
@@ -41,7 +41,6 @@ export const addUserModel = async (data, file) => {
     nombres
   } = data;
 
-  const { filename } = file;
 
   const sqlQuery = `
     INSERT INTO usuario (
@@ -101,7 +100,6 @@ export const addUserModel = async (data, file) => {
 
   // uso de bcrypt para cifrar la contraseña    
   const hash_contrasena = await bcrypt.hash(contrasena, 10);
-  const link_imagen = filename;
 
   const valuesQuery = [
     actividad_semana,
@@ -122,7 +120,7 @@ export const addUserModel = async (data, file) => {
     talla,
     telefono_emergencia,
     genero,
-    link_imagen,
+    linkImagen,
     nombres
   ];
 
@@ -135,7 +133,7 @@ export const addUserModel = async (data, file) => {
 
     // Usuario Creado
     if (result.rowCount === 1) {
-      return result.rowCount;
+      return result;
     } else {
       return null;
     }
