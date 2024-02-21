@@ -144,6 +144,8 @@ export const addUserModel = async (data, linkImagen) => {
     client.release(); // Liberar cliente de la base de datos
   }
 };
+
+
 export const loginUserModel = async (data) => {
   try {
     const { dni, contrasena } = data;
