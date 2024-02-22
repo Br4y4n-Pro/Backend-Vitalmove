@@ -91,8 +91,19 @@ export const deleteUser = async (req, res) => {
 };
 export const updateUser = async (req, res) => {
   const body = req.body;
-  const dataNew = await updateUserModel(body);
-  console.log(dataNew);
+  
+  try {
+    const dataNew = await updateUserModel(body);
+    if (dataNew.rowCount === 1) {
+  res.status(201).json({message: "Se actualizo exitosamente", data: body})
+} else {
+  res.status(401).json({message: "No se pudo actualizar el usuario verifica la informacion y hazlo nuevamente"})
+}    
+  } catch (error) {
+    console.error("Error al traer los datos:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+
 };
 
 export const searchUsers = async (req, res) => {

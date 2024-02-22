@@ -233,27 +233,47 @@ export const deleteUserModel = async( dni ) =>{
   return new Error("El dni ingresado no existe")
 };
 export const updateUserModel = async ( datos ) => {
-  const keys = Object.keys(datos).slice(1); //<-- se hace un slice para eliminar el primer parametro que es el dni que no es necesario para actualizar sino solo para encontrar el usuario a editar 
-  console.log(keys)
-  const values = Object.values(datos).slice(1).join(",")
+  // console.log(datos)
+  const keys = Object.keys(datos);
+  // console.log(keys)
+
+  let keyPop = keys.filter(elemento => elemento !== "id_usuario");
+  
+console.log(keyPop)
+  const values = Object.values(datos);
   console.log(values)
-  const vamos = keys.map((key) =>` ${key} = $${keys.indexOf(key) + 1}`).join(",") 
+  
+  const parametros = keyPop.map((key) =>` ${key} = $${keys.indexOf(key) + 1}`).join(",") 
   /*ARRIBA lo que hace esto es crear una cadena con los datos de key un ejemplo de como se veria seria asi "dni = $1" y eso lo repite con cada uno de las keys*/ 
-  console.log(vamos)
-  const cantidad = Object.keys(datos).length
-  console.log(cantidad)
-  const query = `UPDATE usuario SET ${vamos} WHERE dni = $${cantidad}`
+
+  console.log(parametros)
+  const ultimoValor = Object.values(datos).length
+
+  console.log(ultimoValor)
+
+  const query = `UPDATE usuario SET ${parametros} WHERE id_usuario = $${ultimoValor}`
   console.log(query)
-  const datosdb = [values,datos.dni]
-  console.log(datosdb)
-  // const result = await pool.query(query,datosdb)
-  // console.log(result)
+  const result = await pool.query(query,values)
+  console.log(result)
+
+  if (result.rowCount === 1) {
+    return result
+  } else {
+    return null
+  }
 
   /* por donde quede :)
     estoy viendo como hago para eliminar las comillas que tiene el objecto, elemento o array ni se que mierda es xD al final del mismo para meter el dni 
     estoy pensando en la solucion de que en el body meter al final de todo el dni asi no tengo que hacer todas estas vueltas xD
     pero muy easy quiero otra solución xD
   */
+ // no se hizo validacion de dni ya que no se usa y si se pasa el id es por que el usuario fue seleccionado 
+ /* Arreglado xD la solucion fue hacerlo asi pero luego de analizar y pensar que el dni tambien se puede cambiar decidi que 
+ lo mejor era usar el id_usuario este id se le pasara al objecto se añadira detras de escena ya que el cliente no tiene acceso a
+ este id si no lo tiene pues se consigue con alguna query de mas que se haga antes de la consulta para seleccionarlo pero creo que no es necesario
+ ya que este id se puede pasar ya que hay un get de todos los user y al hacer click esa info se carga :) 
+ update hecho posible modificaciones dependiendo de como vaya el frontend se despide brayan 1:10am :/ 
+ */
 };
 
 
