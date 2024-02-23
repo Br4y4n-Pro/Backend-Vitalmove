@@ -148,21 +148,23 @@ export const addUserModel = async (data, linkImagen) => {
 
 export const loginUserModel = async (data) => {
   try {
+    console.log("firstModel", data)
     const { dni, contrasena } = data;
-
+console.log(dni)
     const client = await pool.connect(); // Conexión a la base de datos
 
     if (await validateDniExist(dni)) {
       try {
-        const result = await client.query("SELECT dni, contrasena FROM usuario WHERE dni = $1", [dni]);
+        const result = await client.query("SELECT * FROM usuario WHERE dni = $1", [dni]);
         const datos = result.rows[0];
+        console.log(datos)
         const compareContrasena = await bcrypt.compare(contrasena, datos.contrasena);
 
         if (!compareContrasena) {
           throw new Error("La contraseña proporcionada no coincide");
         }
         
-        return true;
+        return datos;
       } finally {
         client.release(); // Liberar cliente de la base de datos
       }
@@ -192,7 +194,7 @@ export const getAllUsersModel = async () => {
     throw error;
   }
 };
-export const searchUserModel = async ( values ) => {
+export const getUserInfoModel = async ( values ) => {
   const regexSpace = /^\s*$/; //<--- Regex de que el texto solo tiene espacios
   try {
     const client = await pool.connect(); // Conexión a la base de datos
@@ -203,12 +205,12 @@ export const searchUserModel = async ( values ) => {
       }
       
       if (!isNaN(values)) {
-        const query = "SELECT actividad_semana, alergias, apellidos, dni, dependencia, direccion, eps, fecha_nacimiento, grupo, nivel_semana, nombre_emergencia, parentesco, rh, rol, talla, telefono_emergencia, genero, nombres FROM usuario WHERE  dni::text LIKE $1 || '%'";
+        const query = "SELECT * FROM usuario WHERE  dni::text LIKE $1 || '%'";
         const value = [values];
         const result = await client.query(query, value);
         return result.rows;
       }else{
-        const query = "SELECT actividad_semana, alergias, apellidos, dni, dependencia, direccion, eps, fecha_nacimiento,grupo, nivel_semana, nombre_emergencia, parentesco, rh, rol, talla, telefono_emergencia,genero, nombres FROM usuario WHERE nombres ILIKE '%' || $1 || '%' OR apellidos ILIKE '%' || $1 || '%'";
+        const query = "SELECT * FROM usuario WHERE nombres ILIKE '%' || $1 || '%' OR apellidos ILIKE '%' || $1 || '%'";
         const value = [values];
         const result = await client.query(query, value);
         return result.rows;

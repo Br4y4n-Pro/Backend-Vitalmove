@@ -7,10 +7,10 @@ import { uploadImagenS3Model } from "../models/s3.js";
 import {
   addUserModel,
   loginUserModel,
-  searchUserModel,
   getAllUsersModel,
   deleteUserModel,
   updateUserModel,
+  getUserInfoModel,
 } from "../models/vitalMoveModel.js";
 
 export const addUserNew = async (req, res) => {
@@ -43,16 +43,17 @@ export const addUserNew = async (req, res) => {
 };
 
 
-export const loginUser = async (req, res, next) => {
-  const body = req.body;
+export const loginUser = async (req, res) => {
 
+  const body = req.body;
+console.log(body)
   try {
     const result = await loginUserModel(body);
     if (result instanceof Error) {
       return res.status(401).json({ error: result.message });
     } else {
+      res.status(200).json(result)
       // Si el usuario se autentica correctamente, puedes continuar con el siguiente middleware
-      next();
     }
   } catch (error) {
     // Captura cualquier error que ocurra en loginUserModel y envía una respuesta adecuada
@@ -61,10 +62,11 @@ export const loginUser = async (req, res, next) => {
   }
 };
 //SEARCH USER DE UN SOLO USUARIO Y ESTE ESTA VINCULADO A EL LOGIN DIRECTAMENTE NO ES EL BUSCADOR
-export const searchUser = async (req, res) => {
+export const getUserInfo = async (req, res) => {
   try {
     const { dni } = req.body;
-    const userData = await searchUserModel(dni);
+    const userData = await getUserInfoModel(dni);
+    console.log(userData)
     res.status(200).json(userData);
   } catch (error) {
     console.error("Error al traer los datos:", error.message);
