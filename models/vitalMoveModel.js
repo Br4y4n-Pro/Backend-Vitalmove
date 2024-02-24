@@ -1,22 +1,22 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
-import pkg from 'pg';
+import pkg from "pg";
 const { Pool } = pkg;
-import { CONFIG_DB } from '../config/db.js'
+import { CONFIG_DB } from "../config/db.js";
 import bcrypt from "bcrypt";
 
 const pool = new Pool(CONFIG_DB);
 
 // Prueba de conexion a la base de datos
-export const  getPgVersion = async ( ) => {
-    const client = await pool.connect();
-    try {
-      const result = await client.query('SELECT version()');
-      console.log(result.rows[0]);
-    } finally {
-      client.release();
-    }
-  };
+export const getPgVersion = async () => {
+  const client = await pool.connect();
+  try {
+    const result = await client.query("SELECT version()");
+    console.log(result.rows[0]);
+  } finally {
+    client.release();
+  }
+};
 
 export const addUserModel = async (data, linkImagen) => {
   const {
@@ -38,9 +38,8 @@ export const addUserModel = async (data, linkImagen) => {
     talla,
     telefono_emergencia,
     genero,
-    nombres
+    nombres,
   } = data;
-
 
   const sqlQuery = `
     INSERT INTO usuario (
@@ -85,20 +84,22 @@ export const addUserModel = async (data, linkImagen) => {
     talla,
     telefono_emergencia,
     genero,
-    nombres
+    nombres,
   ];
 
   console.log(requiredValues);
 
-  if (requiredValues.some(value => value == null || value === "")) {
-    throw new Error("No se puede guardar: valor nulo, indefinido o cadena vacía no permitido");
+  if (requiredValues.some((value) => value == null || value === "")) {
+    throw new Error(
+      "No se puede guardar: valor nulo, indefinido o cadena vacía no permitido"
+    );
   }
 
   if (await validateDniExist(dni)) {
     throw new Error("El número de DNI ya está registrado");
   }
 
-  // uso de bcrypt para cifrar la contraseña    
+  // uso de bcrypt para cifrar la contraseña
   const hash_contrasena = await bcrypt.hash(contrasena, 10);
 
   const valuesQuery = [
@@ -121,7 +122,7 @@ export const addUserModel = async (data, linkImagen) => {
     telefono_emergencia,
     genero,
     linkImagen,
-    nombres
+    nombres,
   ];
 
   console.log(valuesQuery);
@@ -145,31 +146,43 @@ export const addUserModel = async (data, linkImagen) => {
   }
 };
 
-
 export const loginUserModel = async (data) => {
+  if (data == undefined) {
+    throw new Error("No se recibio ninguna informarcion o esta incompleta");
+  }
   try {
-    console.log("firstModel", data)
     const { dni, contrasena } = data;
-console.log(dni)
+    // console.log(dni);
     const client = await pool.connect(); // Conexión a la base de datos
 
-    if (await validateDniExist(dni)) {
+    if (validateDniExist(dni)) {
       try {
-        const result = await client.query("SELECT * FROM usuario WHERE dni = $1", [dni]);
+        const result = await client.query(
+          "SELECT * FROM usuario WHERE dni = $1",
+          [dni]
+        );
         const datos = result.rows[0];
-        console.log(datos)
-        const compareContrasena = await bcrypt.compare(contrasena, datos.contrasena);
+        // console.log(datos);
+        const compareContrasena = await bcrypt.compare(
+          contrasena,
+          datos.contrasena
+        );
 
         if (!compareContrasena) {
-          throw new Error("La contraseña proporcionada no coincide");
+          return {
+            mensaje: "La contraseña proporcionada no coincide",
+            rp: "no",
+          };
         }
-        
+
         return datos;
       } finally {
         client.release(); // Liberar cliente de la base de datos
       }
     } else {
-      throw new Error("El DNI ingresado no está registrado en nuestros servicios");
+      throw new Error(
+        "El DNI ingresado no está registrado en nuestros servicios"
+      );
     }
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
@@ -179,12 +192,15 @@ console.log(dni)
 export const getAllUsersModel = async () => {
   try {
     const client = await pool.connect(); // Conexión a la base de datos
-    
+
     try {
       const allUserDB = await client.query("SELECT * FROM usuario");
-      const dataAllUser = { cantidad: allUserDB.rowCount, datos: allUserDB.rows }; //<--- devuelve un array de objetos (Usuarios) :D
+      const dataAllUser = {
+        cantidad: allUserDB.rowCount,
+        datos: allUserDB.rows,
+      }; //<--- devuelve un array de objetos (Usuarios) :D
       console.log(dataAllUser);
-      
+
       return dataAllUser;
     } finally {
       client.release(); // Liberar cliente de la base de datos
@@ -194,23 +210,24 @@ export const getAllUsersModel = async () => {
     throw error;
   }
 };
-export const getUserInfoModel = async ( values ) => {
+export const getUserInfoModel = async (values) => {
   const regexSpace = /^\s*$/; //<--- Regex de que el texto solo tiene espacios
   try {
     const client = await pool.connect(); // Conexión a la base de datos
-    
+
     try {
-      if (regexSpace.test(values) || values === "" ) {
-        return new Error("El valor enviado esta vacio o solo tiene espacios")
+      if (regexSpace.test(values) || values === "") {
+        return new Error("El valor enviado esta vacio o solo tiene espacios");
       }
-      
+
       if (!isNaN(values)) {
         const query = "SELECT * FROM usuario WHERE  dni::text LIKE $1 || '%'";
         const value = [values];
         const result = await client.query(query, value);
         return result.rows;
-      }else{
-        const query = "SELECT * FROM usuario WHERE nombres ILIKE '%' || $1 || '%' OR apellidos ILIKE '%' || $1 || '%'";
+      } else {
+        const query =
+          "SELECT * FROM usuario WHERE nombres ILIKE '%' || $1 || '%' OR apellidos ILIKE '%' || $1 || '%'";
         const value = [values];
         const result = await client.query(query, value);
         return result.rows;
@@ -223,45 +240,49 @@ export const getUserInfoModel = async ( values ) => {
     throw error;
   }
 };
-export const deleteUserModel = async( dni ) =>{
+export const deleteUserModel = async (dni) => {
   if (validateDniExist(dni)) {
-    const result = await pool.query( 'SELECT dni FROM usuario where dni = $1', [dni] )
+    const result = await pool.query("SELECT dni FROM usuario where dni = $1", [
+      dni,
+    ]);
     if (result.rows.length === 1) {
-      return {message: "Se elimino el usuario exitosamente"}
-    }else{
-      return new Error("El dni ingresado no existe")
+      return { message: "Se elimino el usuario exitosamente" };
+    } else {
+      return new Error("El dni ingresado no existe");
     }
   }
-  return new Error("El dni ingresado no existe")
+  return new Error("El dni ingresado no existe");
 };
-export const updateUserModel = async ( datos ) => {
+export const updateUserModel = async (datos) => {
   // console.log(datos)
   const keys = Object.keys(datos);
   // console.log(keys)
 
-  let keyPop = keys.filter(elemento => elemento !== "id_usuario");
-  
-console.log(keyPop)
+  let keyPop = keys.filter((elemento) => elemento !== "id_usuario");
+
+  console.log(keyPop);
   const values = Object.values(datos);
-  console.log(values)
-  
-  const parametros = keyPop.map((key) =>` ${key} = $${keys.indexOf(key) + 1}`).join(",") 
-  /*ARRIBA lo que hace esto es crear una cadena con los datos de key un ejemplo de como se veria seria asi "dni = $1" y eso lo repite con cada uno de las keys*/ 
+  console.log(values);
 
-  console.log(parametros)
-  const ultimoValor = Object.values(datos).length
+  const parametros = keyPop
+    .map((key) => ` ${key} = $${keys.indexOf(key) + 1}`)
+    .join(",");
+  /*ARRIBA lo que hace esto es crear una cadena con los datos de key un ejemplo de como se veria seria asi "dni = $1" y eso lo repite con cada uno de las keys*/
 
-  console.log(ultimoValor)
+  console.log(parametros);
+  const ultimoValor = Object.values(datos).length;
 
-  const query = `UPDATE usuario SET ${parametros} WHERE id_usuario = $${ultimoValor}`
-  console.log(query)
-  const result = await pool.query(query,values)
-  console.log(result)
+  console.log(ultimoValor);
+
+  const query = `UPDATE usuario SET ${parametros} WHERE id_usuario = $${ultimoValor}`;
+  console.log(query);
+  const result = await pool.query(query, values);
+  console.log(result);
 
   if (result.rowCount === 1) {
-    return result
+    return result;
   } else {
-    return null
+    return null;
   }
 
   /* por donde quede :)
@@ -269,8 +290,8 @@ console.log(keyPop)
     estoy pensando en la solucion de que en el body meter al final de todo el dni asi no tengo que hacer todas estas vueltas xD
     pero muy easy quiero otra solución xD
   */
- // no se hizo validacion de dni ya que no se usa y si se pasa el id es por que el usuario fue seleccionado 
- /* Arreglado xD la solucion fue hacerlo asi pero luego de analizar y pensar que el dni tambien se puede cambiar decidi que 
+  // no se hizo validacion de dni ya que no se usa y si se pasa el id es por que el usuario fue seleccionado
+  /* Arreglado xD la solucion fue hacerlo asi pero luego de analizar y pensar que el dni tambien se puede cambiar decidi que 
  lo mejor era usar el id_usuario este id se le pasara al objecto se añadira detras de escena ya que el cliente no tiene acceso a
  este id si no lo tiene pues se consigue con alguna query de mas que se haga antes de la consulta para seleccionarlo pero creo que no es necesario
  ya que este id se puede pasar ya que hay un get de todos los user y al hacer click esa info se carga :) 
@@ -278,14 +299,14 @@ console.log(keyPop)
  */
 };
 
-
-
 //------------------------------------------------
 //-----------------VALIDATES----------------------
 //------------------------------------------------
 
-export const validateDniExist = async ( dniToRegister ) =>{
-  const result = await pool.query( 'SELECT dni FROM usuario where dni = $1', [dniToRegister] )   
+export const validateDniExist = async (dniToRegister) => {
+  const result = await pool.query("SELECT dni FROM usuario where dni = $1", [
+    dniToRegister,
+  ]);
   try {
     if (result.rows.length === 1) {
       return true;
@@ -296,8 +317,7 @@ export const validateDniExist = async ( dniToRegister ) =>{
     console.error("Error al obtener dni del usuario", error);
     throw error;
   }
-
-}
+};
 //------------------------------------------------
 //-----------------END VALIDATES------------------
 //------------------------------------------------

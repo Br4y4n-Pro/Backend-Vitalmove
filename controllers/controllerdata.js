@@ -3,6 +3,7 @@
 // PARA EL LOGIN VA A SER DOS PARAMETROS PERO SE PASARAN POR UN JSON BODY DONDE CONTENDRFA LA CONTRASEÑA Y EL USUARIO ES DECIR DNI HECHO
 
 // PARA EL BUSCADOR SE VA A DAR DOS PARAMETROS DNI Y NOMBRE Y VA A SER UNA QUERY PARA MAS RAPIDEZ
+import { query } from "express";
 import { uploadImagenS3Model } from "../models/s3.js";
 import {
   addUserModel,
@@ -42,18 +43,20 @@ export const addUserNew = async (req, res) => {
   }
 };
 
-
 export const loginUser = async (req, res) => {
-
-  const body = req.body;
-console.log(body)
+  const body = req.body; // DNI Y CONTRASENA
+  console.log(body);
   try {
     const result = await loginUserModel(body);
+    console.log("controlador: ", result);
+    if (result.rp == "no") {
+      // console.log("result .rp dio no entonces entra por esta linea ");
+      return res.status(200).json(result);
+    }
     if (result instanceof Error) {
       return res.status(401).json({ error: result.message });
     } else {
-      res.status(200).json(result)
-      // Si el usuario se autentica correctamente, puedes continuar con el siguiente middleware
+      res.status(200).json({ result });
     }
   } catch (error) {
     // Captura cualquier error que ocurra en loginUserModel y envía una respuesta adecuada
@@ -66,7 +69,7 @@ export const getUserInfo = async (req, res) => {
   try {
     const { dni } = req.body;
     const userData = await getUserInfoModel(dni);
-    console.log(userData)
+    console.log(userData);
     res.status(200).json(userData);
   } catch (error) {
     console.error("Error al traer los datos:", error.message);
@@ -93,19 +96,23 @@ export const deleteUser = async (req, res) => {
 };
 export const updateUser = async (req, res) => {
   const body = req.body;
-  
+
   try {
     const dataNew = await updateUserModel(body);
     if (dataNew.rowCount === 1) {
-  res.status(201).json({message: "Se actualizo exitosamente", data: body})
-} else {
-  res.status(401).json({message: "No se pudo actualizar el usuario verifica la informacion y hazlo nuevamente"})
-}    
+      res
+        .status(201)
+        .json({ message: "Se actualizo exitosamente", data: body });
+    } else {
+      res.status(401).json({
+        message:
+          "No se pudo actualizar el usuario verifica la informacion y hazlo nuevamente",
+      });
+    }
   } catch (error) {
     console.error("Error al traer los datos:", error.message);
     res.status(500).json({ error: error.message });
   }
-
 };
 
 export const searchUsers = async (req, res) => {
