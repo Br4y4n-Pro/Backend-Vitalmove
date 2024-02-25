@@ -3,7 +3,6 @@
 // PARA EL LOGIN VA A SER DOS PARAMETROS PERO SE PASARAN POR UN JSON BODY DONDE CONTENDRFA LA CONTRASEÑA Y EL USUARIO ES DECIR DNI HECHO
 
 // PARA EL BUSCADOR SE VA A DAR DOS PARAMETROS DNI Y NOMBRE Y VA A SER UNA QUERY PARA MAS RAPIDEZ
-import { query } from "express";
 import { uploadImagenS3Model } from "../models/s3.js";
 import {
   addUserModel,
@@ -56,7 +55,7 @@ export const loginUser = async (req, res) => {
     if (result instanceof Error) {
       return res.status(401).json({ error: result.message });
     } else {
-      res.status(200).json({ result });
+      res.status(200).json(result);
     }
   } catch (error) {
     // Captura cualquier error que ocurra en loginUserModel y envía una respuesta adecuada

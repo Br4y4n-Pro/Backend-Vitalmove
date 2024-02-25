@@ -170,12 +170,12 @@ export const loginUserModel = async (data) => {
 
         if (!compareContrasena) {
           return {
-            mensaje: "La contraseña proporcionada no coincide",
-            rp: "no",
+            "mensaje": "La contraseña proporcionada no coincide",
+            "rp": "no"
           };
         }
 
-        return datos;
+        return {...datos,"rp":"si"};
       } finally {
         client.release(); // Liberar cliente de la base de datos
       }
