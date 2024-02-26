@@ -45,6 +45,14 @@ export const addUserNew = async (req, res) => {
 export const loginUser = async (req, res) => {
   const body = req.body; // DNI Y CONTRASENA
   console.log(body);
+  if (body.dni == "" || body.contrasena == "" || !body.contrasena.trim() || !body.dni.trim()) {
+    console.log(`El body llego vacio en alguna de las variables`)
+    return res.status(200).json({
+      "mensaje": "Uno o ambos campos estan vacios",
+      "rp": "no"
+    });
+  }
+  
   try {
     const result = await loginUserModel(body);
     console.log("controlador: ", result);
