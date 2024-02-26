@@ -90,13 +90,18 @@ export const addUserModel = async (data, linkImagen) => {
   console.log(requiredValues);
 
   if (requiredValues.some((value) => value == null || value === "")) {
-    throw new Error(
-      "No se puede guardar: valor nulo, indefinido o cadena vacía no permitido"
-    );
+    return res.status(200).json({
+      mensaje:
+        "No se puede guardar: valor nulo, indefinido o cadena vacía no permitidoEl DNI ingresado no existe",
+      rp: "no",
+    });
   }
 
   if (await validateDniExist(dni)) {
-    throw new Error("El número de DNI ya está registrado");
+    return res.status(200).json({
+      mensaje: "El número de DNI ya está registrado",
+      rp: "no",
+    });
   }
 
   // uso de bcrypt para cifrar la contraseña
@@ -131,7 +136,10 @@ export const addUserModel = async (data, linkImagen) => {
 
   try {
     const result = await client.query(sqlQuery, valuesQuery);
-
+    // return res.status(200).json({
+    //   mensaje: "Uno o ambos campos estan vacios",
+    //   rp: "no",
+    // });
     // Usuario Creado
     if (result.rowCount === 1) {
       return result;
@@ -139,8 +147,10 @@ export const addUserModel = async (data, linkImagen) => {
       return null;
     }
   } catch (error) {
-    console.error("Error al registrar el usuario", error);
-    throw error;
+    return res.status(200).json({
+      mensaje: "Error al registrar el usuario",
+      rp: "no",
+    });
   } finally {
     client.release(); // Liberar cliente de la base de datos
   }
@@ -148,7 +158,10 @@ export const addUserModel = async (data, linkImagen) => {
 
 export const loginUserModel = async (data) => {
   if (data == undefined) {
-    throw new Error("No se recibio ninguna informarcion o esta incompleta");
+    return res.status(200).json({
+      mensaje: "No se recibio informarcion o esta incompleta",
+      rp: "no",
+    });
   }
   try {
     const { dni, contrasena } = data;
@@ -170,23 +183,26 @@ export const loginUserModel = async (data) => {
 
         if (!compareContrasena) {
           return {
-            "mensaje": "La contraseña proporcionada no coincide",
-            "rp": "no"
+            mensaje: "La contraseña proporcionada no coincide",
+            rp: "no",
           };
         }
 
-        return {...datos,"rp":"si"};
+        return { ...datos, rp: "si" };
       } finally {
         client.release(); // Liberar cliente de la base de datos
       }
     } else {
-      throw new Error(
-        "El DNI ingresado no está registrado en nuestros servicios"
-      );
+      return res.status(200).json({
+        mensaje: "El DNI ingresado no está registrado en nuestros servicios",
+        rp: "no",
+      });
     }
   } catch (error) {
-    console.error("Error al iniciar sesión:", error);
-    throw error;
+    return res.status(200).json({
+      mensaje: "Error al iniciar sesion",
+      rp: "no",
+    });
   }
 };
 export const getAllUsersModel = async () => {
@@ -206,8 +222,10 @@ export const getAllUsersModel = async () => {
       client.release(); // Liberar cliente de la base de datos
     }
   } catch (error) {
-    console.error("Error al obtener todos los usuarios", error);
-    throw error;
+    return res.status(200).json({
+      mensaje: "Error al obtener todos los usuaarios",
+      rp: "no",
+    });
   }
 };
 export const getUserInfoModel = async (values) => {
@@ -236,8 +254,10 @@ export const getUserInfoModel = async (values) => {
       client.release(); // Liberar cliente de la base de datos
     }
   } catch (error) {
-    console.error("Error al consultar el usuario", error);
-    throw error;
+    return res.status(200).json({
+      mensaje: "Error al consultar el usuario ",
+      rp: "no",
+    });
   }
 };
 export const deleteUserModel = async (dni) => {
@@ -246,12 +266,21 @@ export const deleteUserModel = async (dni) => {
       dni,
     ]);
     if (result.rows.length === 1) {
-      return { message: "Se elimino el usuario exitosamente" };
+      return res.status(302).json({
+        mensaje: "Se elimino el usuario exitosamente",
+        rp: "si",
+      });
     } else {
-      return new Error("El dni ingresado no existe");
+      return res.status(200).json({
+        mensaje: "El DNI ingresado no existe",
+        rp: "no",
+      });
     }
   }
-  return new Error("El dni ingresado no existe");
+  return res.status(200).json({
+    mensaje: "El DNI ingresado no existe",
+    rp: "no",
+  });
 };
 export const updateUserModel = async (datos) => {
   // console.log(datos)

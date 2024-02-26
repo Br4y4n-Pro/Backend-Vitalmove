@@ -6,7 +6,6 @@
 import { uploadImagenS3Model } from "../models/s3.js";
 import {
   addUserModel,
-  loginUserModel,
   getAllUsersModel,
   deleteUserModel,
   updateUserModel,
@@ -45,14 +44,20 @@ export const addUserNew = async (req, res) => {
 export const loginUser = async (req, res) => {
   const body = req.body; // DNI Y CONTRASENA
   console.log(body);
-  if (body.dni == "" || body.contrasena == "" || !body.contrasena.trim() || !body.dni.trim()) {
-    console.log(`El body llego vacio en alguna de las variables`)
+  if (
+    body.dni == "" ||
+    body.contrasena == "" ||
+    !body.contrasena.trim() ||
+    !body.dni.trim()
+  ) {
+    console.log(`El body llego vacio en alguna de las variables`);
+
     return res.status(200).json({
-      "mensaje": "Uno o ambos campos estan vacios",
-      "rp": "no"
+      mensaje: "Uno o ambos campos estan vacios",
+      rp: "no",
     });
   }
-  
+
   try {
     const result = await loginUserModel(body);
     console.log("controlador: ", result);
@@ -67,8 +72,11 @@ export const loginUser = async (req, res) => {
     }
   } catch (error) {
     // Captura cualquier error que ocurra en loginUserModel y envía una respuesta adecuada
-    console.error("Error al iniciar sesión:", error.message);
-    res.status(500).json({ error: error.message });
+
+    return res.status(203).json({
+      mensaje: "Error al iniciar sesión por red o otros motivos ",
+      rp: "no",
+    });
   }
 };
 //SEARCH USER DE UN SOLO USUARIO Y ESTE ESTA VINCULADO A EL LOGIN DIRECTAMENTE NO ES EL BUSCADOR
@@ -79,8 +87,10 @@ export const getUserInfo = async (req, res) => {
     console.log(userData);
     res.status(200).json(userData);
   } catch (error) {
-    console.error("Error al traer los datos:", error.message);
-    res.status(500).json({ error: error.message });
+    return res.status(203).json({
+      mensaje: "Error al traer datos de la BD ",
+      rp: "no",
+    });
   }
 };
 export const allUser = async (req, res) => {
@@ -88,19 +98,26 @@ export const allUser = async (req, res) => {
     const allUserData = await getAllUsersModel();
     res.status(200).json(allUserData);
   } catch (error) {
-    console.error("Error al traer los datos:", error.message);
-    res.status(500).json({ error: error.message });
+    return res.status(203).json({
+      mensaje: "Error al traer todos los usuarios: ",
+      rp: "no",
+    });
   }
 };
 export const deleteUser = async (req, res) => {
   const { dni } = req.body;
   const result = await deleteUserModel(dni);
+
   if (result instanceof Error) {
-    res.status(401).json({ error: result.message });
+    return res.status(203).json({
+      mensaje: "Error al borrar usuario: " + result.message,
+      rp: "no",
+    });
   } else {
     res.status(200).json(result);
   }
 };
+
 export const updateUser = async (req, res) => {
   const body = req.body;
 
@@ -108,26 +125,29 @@ export const updateUser = async (req, res) => {
     const dataNew = await updateUserModel(body);
     if (dataNew.rowCount === 1) {
       res
-        .status(201)
-        .json({ message: "Se actualizo exitosamente", data: body });
+        .status(202)
+        .json({ message: "Se actualizo exitosamente", data: body, rp: "si" });
     } else {
-      res.status(401).json({
-        message:
-          "No se pudo actualizar el usuario verifica la informacion y hazlo nuevamente",
+      return res.status(203).json({
+        mensaje:
+          "No se pudo actualizar el usuario verifica la informacion y realizalo  nuevamente ",
+        rp: "no",
       });
     }
   } catch (error) {
-    console.error("Error al traer los datos:", error.message);
-    res.status(500).json({ error: error.message });
+    return res.status(203).json({
+      mensaje: "No se pudieron traer los datos ",
+      rp: "no",
+    });
   }
 };
 
 export const searchUsers = async (req, res) => {
   try {
     const query = req.query.q;
-    const result = await searchUserModel(query);
-    if (result instanceof Error) {
-      res.status(401).json({ error: result.message });
+    const result = await getUserInfoModel(query);
+    if (result.rp == "no") {
+      return res.status(203).json(result);
     } else {
       res.status(200).json(result);
     }
