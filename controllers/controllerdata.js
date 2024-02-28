@@ -10,16 +10,15 @@ import {
   deleteUserModel,
   updateUserModel,
   getUserInfoModel,
+  loginUserModel
 } from "../models/vitalMoveModel.js";
 
 export const addUserNew = async (req, res) => {
   console.log("Recibiendo solicitud POST en addUserNew");
+
   const body = req.body;
-  if (!req.file) {
-    return res
-      .status(400)
-      .json({ mensaje: "No se ha seleccionado ningún archivo." });
-  }
+
+  console.log("Este es el body",body);
 
   const urlImagen = await uploadImagenS3Model(req.file);
 
@@ -34,25 +33,30 @@ export const addUserNew = async (req, res) => {
     if (newUser instanceof Error) {
       res.status(401).json({ error: newUser.message });
     } else {
-      res.status(201).json({ mensaje: "Usuario registrado exitosamente" });
+      res
+        .status(201)
+        .json({ mensaje: "Usuario registrado exitosamente", rp: "si" });
     }
   } catch (error) {
-    res.status(500).json({ mensaje: "Error del servidor" });
+    res
+      .status(500)
+      .json({ mensaje: "Error del servidor", error:error });
   }
 };
 
 export const loginUser = async (req, res) => {
   const body = req.body; // DNI Y CONTRASENA
   console.log(body);
+
   if (
     body.dni == "" ||
     body.contrasena == "" ||
     !body.contrasena.trim() ||
-    !body.dni.trim()
+    /\s/.test(body.dni)
   ) {
     console.log(`El body llego vacio en alguna de las variables`);
 
-    return res.status(200).json({
+    return res.status(203).json({
       mensaje: "Uno o ambos campos estan vacios",
       rp: "no",
     });
@@ -60,9 +64,7 @@ export const loginUser = async (req, res) => {
 
   try {
     const result = await loginUserModel(body);
-    console.log("controlador: ", result);
     if (result.rp == "no") {
-      // console.log("result .rp dio no entonces entra por esta linea ");
       return res.status(200).json(result);
     }
     if (result instanceof Error) {
@@ -71,11 +73,10 @@ export const loginUser = async (req, res) => {
       res.status(200).json(result);
     }
   } catch (error) {
-    // Captura cualquier error que ocurra en loginUserModel y envía una respuesta adecuada
-
     return res.status(203).json({
       mensaje: "Error al iniciar sesión por red o otros motivos ",
       rp: "no",
+      error 
     });
   }
 };

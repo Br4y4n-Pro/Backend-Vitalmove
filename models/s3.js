@@ -18,20 +18,24 @@ const s3 = new S3Client({
 
 // RENOMBRAR LA IMAGEN A SUBIR
 export const uploadImagenS3Model = async (file) => {
-  file.customName = uuidv4() + path.extname(file.originalname).toLowerCase();
-  const nameImage = file.customName;
-  const redimensionBuffer = await sharp(file.buffer)
-    .resize({ width: 600, height: 600, fit: "cover" })
-    .toBuffer();
+  if (!file) {
+    return "";
+  } else {
+    file.customName = uuidv4() + path.extname(file.originalname).toLowerCase();
+    const nameImage = file.customName;
+    const redimensionBuffer = await sharp(file.buffer)
+      .resize({ width: 600, height: 600, fit: "cover" })
+      .toBuffer();
 
-  const params = {
-    Bucket: bucket,
-    Key: nameImage,
-    Body: redimensionBuffer,
-    ContentType: "image/jpeg",
-  };
+    const params = {
+      Bucket: bucket,
+      Key: nameImage,
+      Body: redimensionBuffer,
+      ContentType: "image/jpeg",
+    };
 
-  await s3.send(new PutObjectCommand(params));
-  const urlImagen = `https://${bucket}.s3.${miRegion}.amazonaws.com/${nameImage}`;
-  return urlImagen;
+    await s3.send(new PutObjectCommand(params));
+    const urlImagen = `https://${bucket}.s3.${miRegion}.amazonaws.com/${nameImage}`;
+    return urlImagen;
+  }
 };

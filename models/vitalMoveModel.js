@@ -20,7 +20,7 @@ export const getPgVersion = async () => {
 
 export const addUserModel = async (data, linkImagen) => {
   const {
-    actividad_semana,
+    actividadsemana,
     alergias,
     apellidos,
     contrasena,
@@ -28,22 +28,22 @@ export const addUserModel = async (data, linkImagen) => {
     dependencia,
     direccion,
     eps,
-    fecha_nacimiento,
+    fechanacimiento,
     grupo,
-    nivel_semana,
-    nombre_emergencia,
+    nivelsemana,
+    nombreemergencia,
     parentesco,
     rh,
     rol,
     talla,
-    telefono_emergencia,
+    telefonoemergencia,
     genero,
     nombres,
   } = data;
 
   const sqlQuery = `
     INSERT INTO usuario (
-      actividad_semana,
+      actividadsemana,
       alergias,
       apellidos,
       contrasena,
@@ -51,25 +51,26 @@ export const addUserModel = async (data, linkImagen) => {
       dependencia,
       direccion,
       eps,
-      fecha_nacimiento,
+      fechanacimiento,
       grupo,
-      nivel_semana,
-      nombre_emergencia,
+      nivelsemana,
+      nombreemergencia,
       parentesco,
       rh,
       rol,
       talla,
-      telefono_emergencia,
+      telefonoemergencia,
       genero,
-      img_perfil,
+      imgperfil,
       nombres
     ) 
     VALUES (
       $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20
     );`;
 
+
   const requiredValues = [
-    actividad_semana,
+    actividadsemana,
     alergias,
     apellidos,
     contrasena,
@@ -77,17 +78,17 @@ export const addUserModel = async (data, linkImagen) => {
     dependencia,
     direccion,
     eps,
-    fecha_nacimiento,
-    nombre_emergencia,
+    fechanacimiento,
+    nombreemergencia,
     parentesco,
     rh,
     talla,
-    telefono_emergencia,
+    telefonoemergencia,
     genero,
     nombres,
   ];
 
-  console.log(requiredValues);
+  console.log("Valores requeridos ", requiredValues);
 
   if (requiredValues.some((value) => value == null || value === "")) {
     return res.status(200).json({
@@ -108,7 +109,7 @@ export const addUserModel = async (data, linkImagen) => {
   const hash_contrasena = await bcrypt.hash(contrasena, 10);
 
   const valuesQuery = [
-    actividad_semana,
+    actividadsemana,
     alergias,
     apellidos,
     hash_contrasena,
@@ -116,30 +117,31 @@ export const addUserModel = async (data, linkImagen) => {
     dependencia,
     direccion,
     eps,
-    fecha_nacimiento,
+    fechanacimiento,
     grupo,
-    nivel_semana,
-    nombre_emergencia,
+    nivelsemana,
+    nombreemergencia,
     parentesco,
     rh,
     rol,
     talla,
-    telefono_emergencia,
+    telefonoemergencia,
     genero,
     linkImagen,
     nombres,
   ];
 
-  console.log(valuesQuery);
-
+console.log("valores de la query", valuesQuery);
+console.log(linkImagen)
   const client = await pool.connect(); // Conexión a la base de datos
-
+  console.log("conecto")
   try {
+    console.log("Ejecutando consulta SQL:", sqlQuery);
+    console.log("Valores de la consulta:", valuesQuery);
+
     const result = await client.query(sqlQuery, valuesQuery);
-    // return res.status(200).json({
-    //   mensaje: "Uno o ambos campos estan vacios",
-    //   rp: "no",
-    // });
+    console.log("Resultado de la consulta:", result);
+    console.log(result.rowCount,result.rows)
     // Usuario Creado
     if (result.rowCount === 1) {
       return result;
@@ -147,7 +149,9 @@ export const addUserModel = async (data, linkImagen) => {
       return null;
     }
   } catch (error) {
-    return res.status(200).json({
+    console.error("Error al ejecutar la consulta SQL:", error);
+
+    return res.status(203).json({
       mensaje: "Error al registrar el usuario",
       rp: "no",
     });
@@ -157,12 +161,6 @@ export const addUserModel = async (data, linkImagen) => {
 };
 
 export const loginUserModel = async (data) => {
-  if (data == undefined) {
-    return res.status(200).json({
-      mensaje: "No se recibio informarcion o esta incompleta",
-      rp: "no",
-    });
-  }
   try {
     const { dni, contrasena } = data;
     // console.log(dni);
@@ -175,11 +173,13 @@ export const loginUserModel = async (data) => {
           [dni]
         );
         const datos = result.rows[0];
-        // console.log(datos);
+        console.log("DAtos de bd :," ,datos);
         const compareContrasena = await bcrypt.compare(
           contrasena,
           datos.contrasena
         );
+
+        console.log(compareContrasena);
 
         if (!compareContrasena) {
           return {
@@ -193,7 +193,7 @@ export const loginUserModel = async (data) => {
         client.release(); // Liberar cliente de la base de datos
       }
     } else {
-      return res.status(200).json({
+      return res.status(203).json({
         mensaje: "El DNI ingresado no está registrado en nuestros servicios",
         rp: "no",
       });
@@ -211,19 +211,15 @@ export const getAllUsersModel = async () => {
 
     try {
       const allUserDB = await client.query("SELECT * FROM usuario");
-      const dataAllUser = {
-        cantidad: allUserDB.rowCount,
-        datos: allUserDB.rows,
-      }; //<--- devuelve un array de objetos (Usuarios) :D
-      console.log(dataAllUser);
+      
 
-      return dataAllUser;
+      return allUserDB;
     } finally {
       client.release(); // Liberar cliente de la base de datos
     }
   } catch (error) {
     return res.status(200).json({
-      mensaje: "Error al obtener todos los usuaarios",
+      mensaje: "Error al obtener todos los usuarios",
       rp: "no",
     });
   }
