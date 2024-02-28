@@ -20,7 +20,7 @@ export const getPgVersion = async () => {
 
 export const addUserModel = async (data, linkImagen) => {
   const {
-    actividad_semana,
+    actividadsemana,
     alergias,
     apellidos,
     contrasena,
@@ -28,22 +28,22 @@ export const addUserModel = async (data, linkImagen) => {
     dependencia,
     direccion,
     eps,
-    fecha_nacimiento,
+    fechanacimiento,
     grupo,
-    nivel_semana,
-    nombre_emergencia,
+    nivelsemana,
+    nombreemergencia,
     parentesco,
     rh,
     rol,
     talla,
-    telefono_emergencia,
+    telefonoemergencia,
     genero,
     nombres,
   } = data;
 
   const sqlQuery = `
     INSERT INTO usuario (
-      actividad_semana,
+      actividadsemana,
       alergias,
       apellidos,
       contrasena,
@@ -51,15 +51,15 @@ export const addUserModel = async (data, linkImagen) => {
       dependencia,
       direccion,
       eps,
-      fecha_nacimiento,
+      fechanacimiento,
       grupo,
-      nivel_semana,
-      nombre_emergencia,
+      nivelsemana,
+      nombreemergencia,
       parentesco,
       rh,
       rol,
       talla,
-      telefono_emergencia,
+      telefonoemergencia,
       genero,
       img_perfil,
       nombres
@@ -68,8 +68,9 @@ export const addUserModel = async (data, linkImagen) => {
       $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20
     );`;
 
+
   const requiredValues = [
-    actividad_semana,
+    actividadsemana,
     alergias,
     apellidos,
     contrasena,
@@ -77,17 +78,17 @@ export const addUserModel = async (data, linkImagen) => {
     dependencia,
     direccion,
     eps,
-    fecha_nacimiento,
-    nombre_emergencia,
+    fechanacimiento,
+    nombreemergencia,
     parentesco,
     rh,
     talla,
-    telefono_emergencia,
+    telefonoemergencia,
     genero,
     nombres,
   ];
 
-  console.log(requiredValues);
+  console.log("Valores requeridos ", requiredValues);
 
   if (requiredValues.some((value) => value == null || value === "")) {
     throw new Error(
@@ -103,7 +104,7 @@ export const addUserModel = async (data, linkImagen) => {
   const hash_contrasena = await bcrypt.hash(contrasena, 10);
 
   const valuesQuery = [
-    actividad_semana,
+    actividadsemana,
     alergias,
     apellidos,
     hash_contrasena,
@@ -111,21 +112,21 @@ export const addUserModel = async (data, linkImagen) => {
     dependencia,
     direccion,
     eps,
-    fecha_nacimiento,
+    fechanacimiento,
     grupo,
-    nivel_semana,
+    nivelsemana,
     nombre_emergencia,
     parentesco,
     rh,
     rol,
     talla,
-    telefono_emergencia,
+    telefonoemergencia,
     genero,
     linkImagen,
     nombres,
   ];
 
-  console.log(valuesQuery);
+  console.log("valores de la query", valuesQuery);
 
   const client = await pool.connect(); // Conexión a la base de datos
 
@@ -170,19 +171,20 @@ export const loginUserModel = async (data) => {
 
         if (!compareContrasena) {
           return {
-            "mensaje": "La contraseña proporcionada no coincide",
-            "rp": "no"
+            mensaje: "La contraseña proporcionada no coincide",
+            rp: "no",
           };
         }
 
-        return {...datos,"rp":"si"};
+        return { ...datos, rp: "si" };
       } finally {
         client.release(); // Liberar cliente de la base de datos
       }
     } else {
-      throw new Error(
-        "El DNI ingresado no está registrado en nuestros servicios"
-      );
+      return {
+        mensaje: "El DNI ingresado no está registrado en nuestros servicios",
+        rp: "no",
+      };
     }
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
@@ -207,7 +209,7 @@ export const getAllUsersModel = async () => {
     }
   } catch (error) {
     console.error("Error al obtener todos los usuarios", error);
-    throw error;
+    throw new Error("Error al obtener todos los usuarios", error);
   }
 };
 export const getUserInfoModel = async (values) => {
@@ -237,7 +239,7 @@ export const getUserInfoModel = async (values) => {
     }
   } catch (error) {
     console.error("Error al consultar el usuario", error);
-    throw error;
+    throw Error(("Error al consultar el usuario", error));
   }
 };
 export const deleteUserModel = async (dni) => {
