@@ -1,35 +1,24 @@
+import { crearTestCaminataModel } from "../models/testVItalMoveModel.js";
+
 export const crearCaminata = async (req, res) => {
-  console.log(req.body);
-
-  if (
-    req.body.FCR == "" ||
-    req.body.TIEMPO == "" ||
-    req.body.DISTANCIA == "" ||
-    req.body.FCM == ""
-  ) {
-    console.log(`Llegó vacío`);
-
-    return res.status(400).json({
-      mensaje: "Alguno de los campos está vacío",
-      rp: "no",
-    });
-  }
-
   try {
-    const result = await crearTestCaminataModel(req.body);
-    console.log("Controlador:", result);
-    if (result.rp == "no") {
-      return res.status(200).json(result);
-    }
-    if (result instanceof Error) {
-      return res.status(401).json({ error: result.message });
+    // console.log(req.body);
+
+    const caminatadata = await crearTestCaminataModel(req.body);
+
+    console.log("ca", caminatadata.rows);
+
+    if (caminatadata.rowCount === 1) {
+      res.status(200).json({ ...req.body, rp: "si" });
     } else {
-      res.status(200).json(result);
+      res.status(203).json({
+        mensaje: "Error no se pudo ingresar el test",
+        rp: "no",
+      });
     }
   } catch (error) {
-    // Captura cualquier error que ocurra en crearTestCaminataModel y envía una respuesta adecuada
     return res.status(203).json({
-      mensaje: "Error al enviar",
+      mensaje: "Error en la BD ",
       rp: "no",
     });
   }

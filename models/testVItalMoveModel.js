@@ -1,25 +1,3 @@
-// import dotenv from "dotenv";
-// dotenv.config();
-// import pkg from "pg";
-// const { Pool } = pkg;
-// import { CONFIG_DB } from "../config/db.js";
-// const pool = new Pool(CONFIG_DB);
-
-// export const crearTestCaminataModel =(data) => {
-
-//     // pool.query('INSERT INTO caminatas (fcr, tiempo, distancia, fcm) VALUES ($1, $2, $3, $4)', [data.FCR, data.TIEMPO, data.DISTANCIA, data.FCM], (err, result) => {
-//     //         if (err) {
-//     //             console.error('Error al insertar en la base de datos:', err);
-//     //         } else {
-//     //             console.log('Datos insertados correctamente:', result.rows);
-//     //         }
-
-//             const query = 'INSERT INTO caminatas (fcr, tiempo, distancia, fcm) VALUES ($1, $2, $3, $4)';
-//             const values = [data.FCR, data.TIEMPO, data.DISTANCIA, data.FCM];
-
-//             return pool.query(query, values);
-//         };
-
 import dotenv from "dotenv";
 import pkg from "pg";
 import { CONFIG_DB } from "../config/db.js";
@@ -30,11 +8,31 @@ dotenv.config();
 const { Pool } = pkg;
 const pool = new Pool(CONFIG_DB);
 
-export const crearTestCaminataModel = (data) => {
+export const crearTestCaminataModel = async (data) => {
+  const {
+    fcr,
+    tiempo,
+    distancia,
+    consumovo2,
+    barevodos,
+    fcm,
+    descripcionvodos,
+  } = data;
   // Ejemplo básico de inserción (recuerda manejar errores adecuadamente)
+  console.log("Modelo", data);
   const query =
-    "INSERT INTO caminatas (fcr, tiempo, distancia, fcm) VALUES ($1, $2, $3, $4)";
-  const values = [data.FCR, data.TIEMPO, data.DISTANCIA, data.FCM];
+    "INSERT INTO caminata (fcr, tiempo, distancia, fcm, consumovo2,barevodos,descripcionvodos) VALUES ($1, $2, $3, $4,$5,$6,$7)";
+  const values = [
+    fcr,
+    tiempo,
+    distancia,
+    fcm,
+    consumovo2,
+    barevodos,
+    descripcionvodos,
+  ];
 
-  return pool.query(query, values);
+  const res = await pool.query(query, values);
+  console.log("res  em modelo", res);
+  return res;
 };
