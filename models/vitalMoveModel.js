@@ -61,7 +61,7 @@ export const addUserModel = async (data, linkImagen) => {
       talla,
       telefonoemergencia,
       genero,
-      img_perfil,
+      imgperfil,
       nombres
     ) 
     VALUES (
@@ -120,7 +120,7 @@ export const addUserModel = async (data, linkImagen) => {
     fechanacimiento,
     grupo,
     nivelsemana,
-    nombre_emergencia,
+    nombreemergencia,
     parentesco,
     rh,
     rol,
@@ -131,16 +131,17 @@ export const addUserModel = async (data, linkImagen) => {
     nombres,
   ];
 
-  console.log("valores de la query", valuesQuery);
-
+console.log("valores de la query", valuesQuery);
+console.log(linkImagen)
   const client = await pool.connect(); // Conexión a la base de datos
-
+  console.log("conecto")
   try {
+    console.log("Ejecutando consulta SQL:", sqlQuery);
+    console.log("Valores de la consulta:", valuesQuery);
+
     const result = await client.query(sqlQuery, valuesQuery);
-    // return res.status(200).json({
-    //   mensaje: "Uno o ambos campos estan vacios",
-    //   rp: "no",
-    // });
+    console.log("Resultado de la consulta:", result);
+    console.log(result.rowCount,result.rows)
     // Usuario Creado
     if (result.rowCount === 1) {
       return result;
@@ -148,7 +149,9 @@ export const addUserModel = async (data, linkImagen) => {
       return null;
     }
   } catch (error) {
-    return res.status(200).json({
+    console.error("Error al ejecutar la consulta SQL:", error);
+
+    return res.status(203).json({
       mensaje: "Error al registrar el usuario",
       rp: "no",
     });
@@ -158,12 +161,6 @@ export const addUserModel = async (data, linkImagen) => {
 };
 
 export const loginUserModel = async (data) => {
-  if (data == undefined) {
-    return res.status(200).json({
-      mensaje: "No se recibio informarcion o esta incompleta",
-      rp: "no",
-    });
-  }
   try {
     const { dni, contrasena } = data;
     // console.log(dni);
@@ -176,11 +173,13 @@ export const loginUserModel = async (data) => {
           [dni]
         );
         const datos = result.rows[0];
-        // console.log(datos);
+        console.log("DAtos de bd :," ,datos);
         const compareContrasena = await bcrypt.compare(
           contrasena,
           datos.contrasena
         );
+
+        console.log(compareContrasena);
 
         if (!compareContrasena) {
           return {
@@ -212,19 +211,15 @@ export const getAllUsersModel = async () => {
 
     try {
       const allUserDB = await client.query("SELECT * FROM usuario");
-      const dataAllUser = {
-        cantidad: allUserDB.rowCount,
-        datos: allUserDB.rows,
-      }; //<--- devuelve un array de objetos (Usuarios) :D
-      console.log(dataAllUser);
+      
 
-      return dataAllUser;
+      return allUserDB;
     } finally {
       client.release(); // Liberar cliente de la base de datos
     }
   } catch (error) {
     return res.status(200).json({
-      mensaje: "Error al obtener todos los usuaarios",
+      mensaje: "Error al obtener todos los usuarios",
       rp: "no",
     });
   }

@@ -10,13 +10,18 @@ import {
   deleteUserModel,
   updateUserModel,
   getUserInfoModel,
+  loginUserModel
 } from "../models/vitalMoveModel.js";
 
 export const addUserNew = async (req, res) => {
   console.log("Recibiendo solicitud POST en addUserNew");
+
   const body = req.body;
-  console.log(body);
+
+  console.log("Este es el body",body);
+
   const urlImagen = await uploadImagenS3Model(req.file);
+
   try {
     const newUser = await addUserModel(body, urlImagen);
     console.log(`este es el controlador y lo que obtuvo del modelo es`);
@@ -35,7 +40,7 @@ export const addUserNew = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ mensaje: "Error del servidor", error, data: req.body });
+      .json({ mensaje: "Error del servidor", error:error });
   }
 };
 
@@ -47,7 +52,7 @@ export const loginUser = async (req, res) => {
     body.dni == "" ||
     body.contrasena == "" ||
     !body.contrasena.trim() ||
-    !body.dni.trim()
+    /\s/.test(body.dni)
   ) {
     console.log(`El body llego vacio en alguna de las variables`);
 
@@ -59,9 +64,7 @@ export const loginUser = async (req, res) => {
 
   try {
     const result = await loginUserModel(body);
-    console.log("controlador: ", result);
     if (result.rp == "no") {
-      // console.log("result .rp dio no entonces entra por esta linea ");
       return res.status(200).json(result);
     }
     if (result instanceof Error) {
@@ -70,12 +73,10 @@ export const loginUser = async (req, res) => {
       res.status(200).json(result);
     }
   } catch (error) {
-    // Captura cualquier error que ocurra en loginUserModel y envía una respuesta adecuada
-
     return res.status(203).json({
       mensaje: "Error al iniciar sesión por red o otros motivos ",
       rp: "no",
-      error
+      error 
     });
   }
 };

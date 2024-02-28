@@ -12,6 +12,7 @@ import {
 } from "../controllers/controllerdata.js";
 import { uploadDisk, uploadBuffer } from "../models/multerconfig.js";
 import { crearCaminata } from "../controllers/controllerTest.js";
+import { getAllCaminataTests } from "../controllers/controlersTestsB.js";
 const router = express.Router();
 
 //upload debería cargar la imagen y guardarla en la carpeta src/public
@@ -28,6 +29,10 @@ router.get("/buscadorUser", searchUsers);
 router.delete("/deleteUser", deleteUser);
 router.put("/updateUser", updateUser);
 router.get("/allUser", allUser);
+
+//Tests
 router.post("/crearCaminata",crearCaminata)
+router.get("/allCaminata",getAllCaminataTests)
+
 
 export default router;
