@@ -194,17 +194,10 @@ export const loginUserModel = async (data) => {
         client.release(); // Liberar cliente de la base de datos
       }
     } else {
-<<<<<<< HEAD
-      return {
-        mensaje: "El DNI ingresado no está registrado en nuestros servicios",
-        rp: "no",
-      };
-=======
-      return res.status(200).json({
+      return res.status(203).json({
         mensaje: "El DNI ingresado no está registrado en nuestros servicios",
         rp: "no",
       });
->>>>>>> 1206c439259d0eb138ce168540ebf3c72b0e89cc
     }
   } catch (error) {
     return res.status(200).json({
@@ -230,15 +223,10 @@ export const getAllUsersModel = async () => {
       client.release(); // Liberar cliente de la base de datos
     }
   } catch (error) {
-<<<<<<< HEAD
-    console.error("Error al obtener todos los usuarios", error);
-    throw new Error("Error al obtener todos los usuarios", error);
-=======
     return res.status(200).json({
       mensaje: "Error al obtener todos los usuaarios",
       rp: "no",
     });
->>>>>>> 1206c439259d0eb138ce168540ebf3c72b0e89cc
   }
 };
 export const getUserInfoModel = async (values) => {
@@ -267,15 +255,10 @@ export const getUserInfoModel = async (values) => {
       client.release(); // Liberar cliente de la base de datos
     }
   } catch (error) {
-<<<<<<< HEAD
-    console.error("Error al consultar el usuario", error);
-    throw Error(("Error al consultar el usuario", error));
-=======
     return res.status(200).json({
       mensaje: "Error al consultar el usuario ",
       rp: "no",
     });
->>>>>>> 1206c439259d0eb138ce168540ebf3c72b0e89cc
   }
 };
 export const deleteUserModel = async (dni) => {

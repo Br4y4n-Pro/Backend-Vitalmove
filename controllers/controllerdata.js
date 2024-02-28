@@ -42,11 +42,7 @@ export const addUserNew = async (req, res) => {
 export const loginUser = async (req, res) => {
   const body = req.body; // DNI Y CONTRASENA
   console.log(body);
-<<<<<<< HEAD
-  if (body.dni == "" || body.contrasena == "" || !body.contrasena.trim()) {
-    console.log(`El body llego vacio en alguna de las variables`);
-    return res.status(203).json({
-=======
+
   if (
     body.dni == "" ||
     body.contrasena == "" ||
@@ -55,8 +51,7 @@ export const loginUser = async (req, res) => {
   ) {
     console.log(`El body llego vacio en alguna de las variables`);
 
-    return res.status(200).json({
->>>>>>> 1206c439259d0eb138ce168540ebf3c72b0e89cc
+    return res.status(203).json({
       mensaje: "Uno o ambos campos estan vacios",
       rp: "no",
     });
@@ -80,6 +75,7 @@ export const loginUser = async (req, res) => {
     return res.status(203).json({
       mensaje: "Error al iniciar sesión por red o otros motivos ",
       rp: "no",
+      error
     });
   }
 };
