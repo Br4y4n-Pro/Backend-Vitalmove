@@ -11,7 +11,7 @@ import {
   getUserInfo,
 } from "../controllers/controllerdata.js";
 import { uploadDisk, uploadBuffer } from "../models/multerconfig.js";
-import { crearCaminata } from "../controllers/controllerTest.js";
+import { crearCaminata } from "../controllers/controllerTestC.js";
 import { getAllCaminataTests } from "../controllers/controlersTestsB.js";
 const router = express.Router();
 

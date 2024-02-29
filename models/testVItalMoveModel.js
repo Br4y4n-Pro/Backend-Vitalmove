@@ -9,37 +9,36 @@ const { Pool } = pkg;
 const pool = new Pool(CONFIG_DB);
 
 export const crearTestCaminataModel = async (data) => {
-  const {
-    fcr,
-    tiempo,
-    distancia,
-    consumovo2,
-    barevodos,
-    fcm,
-    descripcionvodos,
-  } = data;
+  const { fcr, tiempo, distancia, fcm } = data;
+  let barevodos = "";
+
   // Ejemplo básico de inserción (recuerda manejar errores adecuadamente)
   console.log("Modelo", data);
-  const query =
-    "INSERT INTO caminata (fcr, tiempo, distancia, fcm, consumovo2,barevodos,descripcionvodos) VALUES ($1, $2, $3, $4,$5,$6,$7)";
-  const values = [
-    fcr,
-    tiempo,
-    distancia,
-    fcm,
-    consumovo2,
-    barevodos,
-    descripcionvodos,
-  ];
 
+  const Consumov = (0.1 * (distancia / tiempo) + 3.5).toFixed(2);
+  // console.log(Consumov);
+  if (Consumov <= 10.99) {
+    // console.log("aqui");
+    barevodos = "Bajo";
+  } else if (Consumov >= 16.01) {
+    // console.log("aca");
+    barevodos = "excelente";
+  } else {
+    // console.log("DONDE ");
+    barevodos = "Bueno";
+  }
+  console.log(barevodos);
+  const query =
+    "INSERT INTO caminata (fcr, tiempo, distancia, fcm, consumovo2,barevodos) VALUES ($1, $2, $3, $4,$5,$6)";
+  const values = [fcr, tiempo, distancia, fcm, Consumov, barevodos];
+  console.log(fcr, tiempo, distancia, fcm, Consumov, barevodos);
   const res = await pool.query(query, values);
   console.log("res  em modelo", res);
   return res;
 };
 
-export const getAllCaminataTestsModels = async ( ) => {
-
-try {
+export const getAllCaminataTestsModels = async () => {
+  try {
     const client = await pool.connect(); // Conexión a la base de datos
 
     try {
@@ -48,7 +47,7 @@ try {
         cantidad: allCaminataTest.rowCount,
         datos: allCaminataTest.rows,
       }; //<--- devuelve un array de objetos (Usuarios) :D
-    //   console.log(allCaminataTest);
+      //   console.log(allCaminataTest);
 
       return dataAllCaminataTest;
     } finally {
@@ -60,4 +59,4 @@ try {
       rp: "no",
     });
   }
-}
+};
