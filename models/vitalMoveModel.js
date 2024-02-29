@@ -213,7 +213,7 @@ export const getAllUsersModel = async () => {
       const allUserDB = await client.query("SELECT * FROM usuario");
       
 
-      return allUserDB;
+      return allUserDB.rows;
     } finally {
       client.release(); // Liberar cliente de la base de datos
     }

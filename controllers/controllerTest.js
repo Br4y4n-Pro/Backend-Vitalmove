@@ -4,7 +4,6 @@ export const crearCaminata = async (req, res) => {
   try {
     // console.log(req.body);
 
-<<<<<<< HEAD
     const caminatadata = await crearTestCaminataModel(req.body);
 
     console.log("ca", caminatadata.rows);
@@ -24,6 +23,3 @@ export const crearCaminata = async (req, res) => {
     });
   }
 };
-=======
-}
->>>>>>> 621345c1a5ccccf5623c0cc45c5eb4046336a878

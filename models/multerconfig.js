@@ -37,5 +37,5 @@ export const uploadDisk = multer({
 // Multer para MemoryStorage
 const storageBuffer = multer.memoryStorage(); // multer almacena el archivo de forma temporal.
 export const uploadBuffer = multer({ storage: storageBuffer }).single(
-  "img_perfil"
+  "imgperfil"
 );

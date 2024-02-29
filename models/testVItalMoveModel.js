@@ -32,22 +32,10 @@ export const crearTestCaminataModel = async (data) => {
     descripcionvodos,
   ];
 
-<<<<<<< HEAD
   const res = await pool.query(query, values);
   console.log("res  em modelo", res);
   return res;
 };
-=======
-
-// export const crearTestCaminataModel =(data) => {
-
-//     cvodos = 20 
-//     if
-
-// }
-
-
-
 
 export const getAllCaminataTestsModels = async ( ) => {
 
@@ -73,4 +61,3 @@ try {
     });
   }
 }
->>>>>>> 621345c1a5ccccf5623c0cc45c5eb4046336a878
