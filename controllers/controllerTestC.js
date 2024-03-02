@@ -1,4 +1,7 @@
-import { crearTestCaminataModel } from "../models/testVItalMoveModel.js";
+import {
+  crearTestBruceModModel,
+  crearTestCaminataModel,
+} from "../models/testVItalMoveModel.js";
 
 export const crearCaminata = async (req, res) => {
   try {
@@ -21,5 +24,35 @@ export const crearCaminata = async (req, res) => {
       mensaje: "Error en la BD ",
       rp: "no",
     });
+  }
+};
+
+export const crearTestBruce = async (req, res) => {
+  // console.log("Recibiendo solicitud POST en bruce");
+
+  const body = req.body;
+
+  // console.log("Este es el body", body);
+  // hasta awui llega todo bien
+  try {
+    const newtestB = await crearTestBruceModModel(body);
+    console.log(newtestB);
+
+    // console.log(`este es el controlador y lo que obtuvo del modelo es`);
+
+    if (newtestB === null) {
+      res
+        .status(401)
+        .json({ error: "No se pudo crear el test bruce ", rp: "no" });
+    }
+    if (newtestB instanceof Error) {
+      res.status(401).json({ error: newtestB.message });
+    } else {
+      res
+        .status(201)
+        .json({ mensaje: "test bruce  registrado exitosamente", rp: "si" });
+    }
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error del servidor", error: error });
   }
 };
