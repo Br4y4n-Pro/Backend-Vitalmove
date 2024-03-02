@@ -60,3 +60,36 @@ export const getAllCaminataTestsModels = async () => {
     });
   }
 };
+
+export const caminataOnePersonModel = async (idpersona) => {
+  try {
+    const client = await pool.connect(); // Conexión a la base de datos
+
+    try {
+      const caminataUser = await client.query(
+        `SELECT t3.idusuario, t2.fecha, t1.fcr, t1.tiempo, t1.distancia, t1.consumovo2, t1.barevodos, t1.fcm 
+        FROM tests AS t2 
+        JOIN usuario AS t3 ON t2.idusuario = t3.idusuario 
+        JOIN caminata AS t1 ON t2.fkcaminata = t1.idcaminata 
+        WHERE t3.idusuario = $1 
+        ORDER BY t2.fecha ASC`,
+        [idpersona]
+      );
+      console.log(caminataUser);
+      const dataAllCaminataTest = {
+        cantidad: caminataUser.rowCount,
+        datos: caminataUser.rows,
+      }; //<--- devuelve un array de objetos (Usuarios) :D
+      //   console.log(allCaminataTest);
+
+      return dataAllCaminataTest;
+    } finally {
+      client.release(); // Liberar cliente de la base de datos
+    }
+  } catch (error) {
+    return res.status(200).json({
+      mensaje: "Error al obtener todos los Tests de Caminata del usuario",
+      rp: "no",
+    });
+  }
+};
