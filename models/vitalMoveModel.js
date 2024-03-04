@@ -70,7 +70,6 @@ export const addUserModel = async (data, linkImagen) => {
       $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20
     );`;
 
-
   const requiredValues = [
     actividadsemana,
     alergias,
@@ -155,10 +154,10 @@ console.log("siguio")
     nombres,
   ];
 
-console.log("valores de la query", valuesQuery);
-console.log(linkImagen)
+  console.log("valores de la query", valuesQuery);
+  console.log(linkImagen);
   const client = await pool.connect(); // Conexión a la base de datos
-  console.log("conecto")
+  console.log("conecto");
   try {
     console.log("Ejecutando consulta SQL:", sqlQuery);
     console.log("Valores de la consulta:", valuesQuery);
@@ -166,7 +165,7 @@ console.log(linkImagen)
 
     const result = await client.query(sqlQuery, valuesQuery);
     console.log("Resultado de la consulta:", result);
-    console.log(result.rowCount,result.rows)
+    console.log(result.rowCount, result.rows);
     // Usuario Creado
     if (result.rowCount === 1) {
       return result;
@@ -198,7 +197,7 @@ export const loginUserModel = async (data) => {
           [dni]
         );
         const datos = result.rows[0];
-        console.log("DAtos de bd :," ,datos);
+        console.log("DAtos de bd :,", datos);
         const compareContrasena = await bcrypt.compare(
           contrasena,
           datos.contrasena
@@ -236,7 +235,6 @@ export const getAllUsersModel = async () => {
 
     try {
       const allUserDB = await client.query("SELECT * FROM usuario");
-      
 
       return allUserDB.rows;
     } finally {

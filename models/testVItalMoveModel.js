@@ -24,7 +24,7 @@ export const crearTestCaminataModel = async (data) => {
     // console.log("aca");
     barevodos = "excelente";
   } else {
-    // console.log("DONDE ");
+    // console.log("DONDE ");|
     barevodos = "Bueno";
   }
   console.log(barevodos);
@@ -58,5 +58,110 @@ export const getAllCaminataTestsModels = async () => {
       mensaje: "Error al obtener todos los Tests de Caminata",
       rp: "no",
     });
+  }
+};
+
+export const caminataOnePersonModel = async (idpersona) => {
+  try {
+    const client = await pool.connect(); // Conexión a la base de datos
+
+    try {
+      const caminataUser = await client.query(
+        `SELECT t3.idusuario, t2.fecha, t1.fcr, t1.tiempo, t1.distancia, t1.consumovo2, t1.barevodos, t1.fcm 
+        FROM tests AS t2 
+        JOIN usuario AS t3 ON t2.idusuario = t3.idusuario 
+        JOIN caminata AS t1 ON t2.fkcaminata = t1.idcaminata 
+        WHERE t3.idusuario = $1 
+        ORDER BY t2.fecha ASC`,
+        [idpersona]
+      );
+      console.log(caminataUser);
+      const dataAllCaminataTest = {
+        cantidad: caminataUser.rowCount,
+        datos: caminataUser.rows,
+      }; //<--- devuelve un array de objetos (Usuarios) :D
+      //   console.log(allCaminataTest);
+
+      return dataAllCaminataTest;
+    } finally {
+      client.release(); // Liberar cliente de la base de datos
+    }
+  } catch (error) {
+    return res.status(200).json({
+      mensaje: "Error al obtener todos los Tests de Caminata del usuario",
+      rp: "no",
+    });
+  }}
+
+export const crearTestBruceModModel = async (data) => {
+  const { etapa, saturacionvodos } = data;
+
+  // Ejemplo básico de inserción (recuerda manejar errores adecuadamente)
+  // console.log("Modelo", data);
+  // console.log(typeof etapa);
+
+  const dt1 = selecionarEtapa(etapa);
+
+  const { velocidad, grados, tiempo, vodos } = dt1;
+  // console.log(dt1);
+
+  const query =
+    "INSERT INTO etapas (elefinal, velocidadfinal, numeroetapa, vodos, saturacionvodos, tiempo) VALUES ($1, $2, $3, $4, $5, $6)";
+
+  const values = [grados, velocidad, etapa, vodos, saturacionvodos, tiempo];
+
+  const client = await pool.connect(); // Conexión a la base de datos
+  // console.log("conecto");
+  try {
+    const result = await client.query(query, values);
+    // console.log("Resultado de la consulta:", result);
+    // console.log(result.rowCount, result.rows);
+    // Bruce  Creado
+    if (result.rowCount === 1) {
+      return result;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    // console.error("Error al ejecutar la consulta SQL:", error);
+
+    return res.status(203).json({
+      mensaje: "Error al registrar el test",
+      rp: "no",
+    });
+  } finally {
+    client.release(); // Liberar cliente de la base de datos
+  }
+};
+
+const selecionarEtapa = (etapa) => {
+  if (etapa == 1) {
+    return { velocidad: 2.7, grados: 0, tiempo: 3, vodos: 2.3 };
+  }
+  if (etapa == 2) {
+    return { velocidad: 2.7, grados: 5, tiempo: 3, vodos: 3.5 };
+  }
+  if (etapa == 3) {
+    return { velocidad: 2.7, grados: 10, tiempo: 3, vodos: 4.6 };
+  }
+  if (etapa == 4) {
+    return { velocidad: 4, grados: 12, tiempo: 3, vodos: 7 };
+  }
+  if (etapa == 5) {
+    return { velocidad: 5.4, grados: 14, tiempo: 3, vodos: 10.1 };
+  }
+
+  // console.log("sigue");
+  if (etapa == 6) {
+    return { velocidad: 6.7, grados: 16, tiempo: 3, vodos: 12.9 };
+  }
+  if (etapa == 7) {
+    return { velocidad: 8.0, grados: 18, tiempo: 3, vodos: 15 };
+  }
+  if (etapa == 8) {
+    return { velocidad: 8.8, grados: 20, tiempo: 3, vodos: 16 };
+  }
+  if (etapa == 9) {
+    return { velocidad: 10.5, grados: 22, tiempo: 3, vodos: 19.1 };
   }
 };
