@@ -15,13 +15,10 @@ import {
 
 export const addUserNew = async (req, res) => {
   console.log("Recibiendo solicitud POST en addUserNew");
-
   const body = req.body;
-
-  console.log("Este es el body",body);
-
+  console.log(body,'-------------------------',req.file)
   const urlImagen = await uploadImagenS3Model(req.file);
-
+  console.log(urlImagen, "urlImagen")
   try {
     const newUser = await addUserModel(body, urlImagen);
     console.log(`este es el controlador y lo que obtuvo del modelo es`);

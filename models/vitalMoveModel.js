@@ -41,6 +41,8 @@ export const addUserModel = async (data, linkImagen) => {
     nombres,
   } = data;
 
+
+
   const sqlQuery = `
     INSERT INTO usuario (
       actividadsemana,
@@ -97,17 +99,39 @@ export const addUserModel = async (data, linkImagen) => {
       rp: "no",
     });
   }
-
+  console.log("llego")
   if (await validateDniExist(dni)) {
-    return res.status(200).json({
+    return res.status(203).json({
       mensaje: "El número de DNI ya está registrado",
       rp: "no",
     });
   }
-
+console.log("siguio")
   // uso de bcrypt para cifrar la contraseña
+  console.log("hash")
   const hash_contrasena = await bcrypt.hash(contrasena, 10);
+  console.log("siguio")
+  console.log("roll")
+  const roll = (value) => {
+    if (value == undefined) {
+      return 0
+    } return parseInt(value);
+  }
+  console.log( "sigui0", roll)
+  console.log("nivel Actividad")
+  const  nivelSemanaFuncion = (value) => {
+    const numero = parseInt(value)
 
+    if (numero >= 3 && numero <= 7) {
+      return  'Moderado'
+    } else if (numero == 0) {
+     return 'Sedentario'
+    }
+      return 'bajo'
+    }
+    const nivelsemanaResult = nivelSemanaFuncion(actividadsemana)
+    const rolResult = roll(rol)
+    console.log(nivelsemanaResult,"  ", rolResult)
   const valuesQuery = [
     actividadsemana,
     alergias,
@@ -119,11 +143,11 @@ export const addUserModel = async (data, linkImagen) => {
     eps,
     fechanacimiento,
     grupo,
-    nivelsemana,
+    nivelsemanaResult,
     nombreemergencia,
     parentesco,
     rh,
-    rol,
+    rolResult,
     talla,
     telefonoemergencia,
     genero,
@@ -138,6 +162,7 @@ console.log(linkImagen)
   try {
     console.log("Ejecutando consulta SQL:", sqlQuery);
     console.log("Valores de la consulta:", valuesQuery);
+
 
     const result = await client.query(sqlQuery, valuesQuery);
     console.log("Resultado de la consulta:", result);

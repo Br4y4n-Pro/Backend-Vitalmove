@@ -19,7 +19,7 @@ const s3 = new S3Client({
 // RENOMBRAR LA IMAGEN A SUBIR
 export const uploadImagenS3Model = async (file) => {
   if (!file) {
-    return "";
+    return null;
   } else {
     file.customName = uuidv4() + path.extname(file.originalname).toLowerCase();
     const nameImage = file.customName;
