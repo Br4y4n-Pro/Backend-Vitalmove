@@ -27,8 +27,8 @@ export const addUserNew = async (req, res) => {
     if (newUser === null) {
       res.status(401).json({ error: "No se pudo crear el usuario" });
     }
-    if (newUser instanceof Error) {
-      res.status(401).json({ error: newUser.message });
+    if (newUser.rp === "no") {
+      res.status(203).json(newUser);
     } else {
       res
         .status(201)

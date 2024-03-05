@@ -99,11 +99,14 @@ export const addUserModel = async (data, linkImagen) => {
     });
   }
   console.log("llego")
-  if (await validateDniExist(dni)) {
-    return res.status(203).json({
-      mensaje: "El número de DNI ya está registrado",
+  console.log(validateDniExist(dni))
+
+  if ( await validateDniExist(dni)) {
+    console.log(validateDniExist(dni))
+    return{
+      mensaje: `El número de dni ${dni} ya está registrado`,
       rp: "no",
-    });
+    };    
   }
 console.log("siguio")
   // uso de bcrypt para cifrar la contraseña
@@ -352,13 +355,17 @@ export const updateUserModel = async (datos) => {
 //------------------------------------------------
 
 export const validateDniExist = async (dniToRegister) => {
-  const result = await pool.query("SELECT dni FROM usuario where dni = $1", [
-    dniToRegister,
-  ]);
+  console.log('entro')
   try {
+    const result = await pool.query("SELECT dni FROM usuario where dni = $1", [
+    dniToRegister,
+    ]);
+    console.log(result.rowCount)
     if (result.rows.length === 1) {
+      console.log(true)
       return true;
     } else {
+      console.log(null)
       return null; //no se encontro el dni
     }
   } catch (error) {
