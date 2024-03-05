@@ -177,7 +177,7 @@ export const addUserModel = async (data, linkImagen) => {
     return {
       mensaje: "Error al registrar el usuario",
       rp: "no",
-    });
+    };
   } finally {
     client.release(); // Liberar cliente de la base de datos
   }
