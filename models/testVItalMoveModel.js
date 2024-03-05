@@ -91,18 +91,19 @@ export const caminataOnePersonModel = async (idpersona) => {
       mensaje: "Error al obtener todos los Tests de Caminata del usuario",
       rp: "no",
     });
-  }}
+  }
+};
 
 export const crearTestBruceModModel = async (data) => {
-  const { etapa, saturacionvodos } = data;
+  const { etapas, saturacionvodos } = data;
 
   // Ejemplo básico de inserción (recuerda manejar errores adecuadamente)
   // console.log("Modelo", data);
   // console.log(typeof etapa);
 
-  const dt1 = selecionarEtapa(etapa);
+  const dt1 = selecionarEtapa(etapas);
 
-  const { velocidad, grados, tiempo, vodos } = dt1;
+  const { velocidad, grados, tiempo, vodos, etapa } = dt1;
   // console.log(dt1);
 
   const query =
@@ -135,33 +136,31 @@ export const crearTestBruceModModel = async (data) => {
 };
 
 const selecionarEtapa = (etapa) => {
-  if (etapa == 1) {
-    return { velocidad: 2.7, grados: 0, tiempo: 3, vodos: 2.3 };
+  if (etapa == "Etapa 1") {
+    return { velocidad: 2.7, grados: 0, tiempo: 3, vodos: 2.3, etapa: 1 };
   }
-  if (etapa == 2) {
-    return { velocidad: 2.7, grados: 5, tiempo: 3, vodos: 3.5 };
+  if (etapa == "Etapa 2") {
+    return { velocidad: 2.7, grados: 5, tiempo: 3, vodos: 3.5, etapa: 2 };
   }
-  if (etapa == 3) {
-    return { velocidad: 2.7, grados: 10, tiempo: 3, vodos: 4.6 };
+  if (etapa == "Etapa 3") {
+    return { velocidad: 2.7, grados: 10, tiempo: 3, vodos: 4.6, etapa: 3 };
   }
-  if (etapa == 4) {
-    return { velocidad: 4, grados: 12, tiempo: 3, vodos: 7 };
+  if (etapa == "Etapa 4") {
+    return { velocidad: 4, grados: 12, tiempo: 3, vodos: 7, etapa: 4 };
   }
-  if (etapa == 5) {
-    return { velocidad: 5.4, grados: 14, tiempo: 3, vodos: 10.1 };
+  if (etapa == "Etapa 5") {
+    return { velocidad: 5.4, grados: 14, tiempo: 3, vodos: 10.1, etapa: 5 };
   }
-
-  // console.log("sigue");
-  if (etapa == 6) {
-    return { velocidad: 6.7, grados: 16, tiempo: 3, vodos: 12.9 };
+  if (etapa == "Etapa 6") {
+    return { velocidad: 6.7, grados: 16, tiempo: 3, vodos: 12.9, etapa: 6 };
   }
-  if (etapa == 7) {
-    return { velocidad: 8.0, grados: 18, tiempo: 3, vodos: 15 };
+  if (etapa == "Etapa 7") {
+    return { velocidad: 8.0, grados: 18, tiempo: 3, vodos: 15, etapa: 7 };
   }
-  if (etapa == 8) {
-    return { velocidad: 8.8, grados: 20, tiempo: 3, vodos: 16 };
+  if (etapa == "Etapa 8") {
+    return { velocidad: 8.8, grados: 20, tiempo: 3, vodos: 16, etapa: 8 };
   }
-  if (etapa == 9) {
-    return { velocidad: 10.5, grados: 22, tiempo: 3, vodos: 19.1 };
+  if (etapa == "Etapa 9") {
+    return { velocidad: 10.5, grados: 22, tiempo: 3, vodos: 19.1, etapa: 9 };
   }
 };

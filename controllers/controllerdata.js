@@ -10,15 +10,15 @@ import {
   deleteUserModel,
   updateUserModel,
   getUserInfoModel,
-  loginUserModel
+  loginUserModel,
 } from "../models/vitalMoveModel.js";
 
 export const addUserNew = async (req, res) => {
   console.log("Recibiendo solicitud POST en addUserNew");
   const body = req.body;
-  console.log(body,'-------------------------',req.file)
+  console.log(body, "-------------------------", req.file);
   const urlImagen = await uploadImagenS3Model(req.file);
-  console.log(urlImagen, "urlImagen")
+  console.log(urlImagen, "urlImagen");
   try {
     const newUser = await addUserModel(body, urlImagen);
     console.log(`este es el controlador y lo que obtuvo del modelo es`);
@@ -35,9 +35,7 @@ export const addUserNew = async (req, res) => {
         .json({ mensaje: "Usuario registrado exitosamente", rp: "si" });
     }
   } catch (error) {
-    res
-      .status(500)
-      .json({ mensaje: "Error del servidor", error:error });
+    res.status(500).json({ mensaje: "Error del servidor", error: error });
   }
 };
 
@@ -61,8 +59,9 @@ export const loginUser = async (req, res) => {
 
   try {
     const result = await loginUserModel(body);
+    console.log("first", result);
     if (result.rp == "no") {
-      return res.status(200).json(result);
+      return res.status(203).json(result);
     }
     if (result instanceof Error) {
       return res.status(401).json({ error: result.message });
@@ -71,9 +70,8 @@ export const loginUser = async (req, res) => {
     }
   } catch (error) {
     return res.status(203).json({
-      mensaje: "Error al iniciar sesión por red o otros motivos ",
+      mensaje: "Error del Servidor",
       rp: "no",
-      error 
     });
   }
 };

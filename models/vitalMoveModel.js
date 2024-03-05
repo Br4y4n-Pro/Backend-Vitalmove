@@ -41,8 +41,6 @@ export const addUserModel = async (data, linkImagen) => {
     nombres,
   } = data;
 
-
-
   const sqlQuery = `
     INSERT INTO usuario (
       actividadsemana,
@@ -99,41 +97,40 @@ export const addUserModel = async (data, linkImagen) => {
     });
   }
   console.log("llego")
-  console.log(validateDniExist(dni))
 
   if ( await validateDniExist(dni)) {
-    console.log(validateDniExist(dni))
     return{
       mensaje: `El número de dni ${dni} ya está registrado`,
       rp: "no",
     };    
   }
-console.log("siguio")
+  console.log("siguio");
   // uso de bcrypt para cifrar la contraseña
-  console.log("hash")
+  console.log("hash");
   const hash_contrasena = await bcrypt.hash(contrasena, 10);
-  console.log("siguio")
-  console.log("roll")
+  console.log("siguio");
+  console.log("roll");
   const roll = (value) => {
     if (value == undefined) {
-      return 0
-    } return parseInt(value);
-  }
-  console.log( "sigui0", roll)
-  console.log("nivel Actividad")
-  const  nivelSemanaFuncion = (value) => {
-    const numero = parseInt(value)
+      return 0;
+    }
+    return parseInt(value);
+  };
+  console.log("sigui0", roll);
+  console.log("nivel Actividad");
+  const nivelSemanaFuncion = (value) => {
+    const numero = parseInt(value);
 
     if (numero >= 3 && numero <= 7) {
-      return  'Moderado'
+      return "Moderado";
     } else if (numero == 0) {
-     return 'Sedentario'
+      return "Sedentario";
     }
-      return 'bajo'
-    }
-    const nivelsemanaResult = nivelSemanaFuncion(actividadsemana)
-    const rolResult = roll(rol)
-    console.log(nivelsemanaResult,"  ", rolResult)
+    return "bajo";
+  };
+  const nivelsemanaResult = nivelSemanaFuncion(actividadsemana);
+  const rolResult = roll(rol);
+  console.log(nivelsemanaResult, "  ", rolResult);
   const valuesQuery = [
     actividadsemana,
     alergias,
@@ -165,7 +162,6 @@ console.log("siguio")
     console.log("Ejecutando consulta SQL:", sqlQuery);
     console.log("Valores de la consulta:", valuesQuery);
 
-
     const result = await client.query(sqlQuery, valuesQuery);
     console.log("Resultado de la consulta:", result);
     console.log(result.rowCount, result.rows);
@@ -190,40 +186,42 @@ console.log("siguio")
 export const loginUserModel = async (data) => {
   try {
     const { dni, contrasena } = data;
-    // console.log(dni);
+    console.log(dni);
     const client = await pool.connect(); // Conexión a la base de datos
 
-    if (validateDniExist(dni)) {
-      try {
-        const result = await client.query(
-          "SELECT * FROM usuario WHERE dni = $1",
-          [dni]
-        );
-        const datos = result.rows[0];
-        console.log("DAtos de bd :,", datos);
-        const compareContrasena = await bcrypt.compare(
-          contrasena,
-          datos.contrasena
-        );
-
-        console.log(compareContrasena);
-
-        if (!compareContrasena) {
-          return {
-            mensaje: "La contraseña proporcionada no coincide",
-            rp: "no",
-          };
-        }
-
-        return { ...datos, rp: "si" };
-      } finally {
-        client.release(); // Liberar cliente de la base de datos
-      }
-    } else {
-      return res.status(203).json({
+    if ((await validateDniExist(dni)) == null) {
+      return {
         mensaje: "El DNI ingresado no está registrado en nuestros servicios",
         rp: "no",
-      });
+      };
+    }
+
+    try {
+      const result = await client.query(
+        "SELECT * FROM usuario WHERE dni = $1",
+        [dni]
+      );
+      console.log(result);
+      const datos = result.rows[0];
+      console.log("DAtos de bd :,", datos);
+
+      const compareContrasena = await bcrypt.compare(
+        contrasena,
+        datos.contrasena
+      );
+
+      console.log(compareContrasena);
+
+      if (!compareContrasena) {
+        return {
+          mensaje: "La contraseña proporcionada no coincide",
+          rp: "no",
+        };
+      }
+
+      return { ...datos, rp: "si" };
+    } finally {
+      client.release(); // Liberar cliente de la base de datos
     }
   } catch (error) {
     return res.status(200).json({
@@ -356,6 +354,10 @@ export const updateUserModel = async (datos) => {
 
 export const validateDniExist = async (dniToRegister) => {
   console.log('entro')
+  const result = await pool.query("SELECT dni FROM usuario where dni = $1", [
+    dniToRegister,
+  ]);
+  console.log("Dni Existe", result);
   try {
     const result = await pool.query("SELECT dni FROM usuario where dni = $1", [
     dniToRegister,
