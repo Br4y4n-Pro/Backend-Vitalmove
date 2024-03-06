@@ -92,6 +92,7 @@ export const getUserInfo = async (req, res) => {
 export const allUser = async (req, res) => {
   try {
     const allUserData = await getAllUsersModel();
+    console.log(allUserData);
     res.status(200).json(allUserData);
   } catch (error) {
     return res.status(203).json({
