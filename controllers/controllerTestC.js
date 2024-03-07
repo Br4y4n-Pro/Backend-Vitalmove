@@ -1,7 +1,4 @@
-import {
-  crearTestBruceModModel,
-  crearTestCaminataModel,
-} from "../models/testVItalMoveModel.js";
+import { crearTestBruceModModel, crearTestCaminataModel } from "../models/testVItalMoveModel.js";
 
 export const crearCaminata = async (req, res) => {
   try {
@@ -36,9 +33,9 @@ export const crearTestBruce = async (req, res) => {
   // hasta awui llega todo bien
   try {
     const newtestB = await crearTestBruceModModel(body);
-    console.log(newtestB);
+    // console.log(newtestB);
 
-    // console.log(`este es el controlador y lo que obtuvo del modelo es`);
+    console.log(`este es el controlador y lo que obtuvo del modelo es`);
 
     if (newtestB === null) {
       res

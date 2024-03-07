@@ -100,18 +100,18 @@ export const crearTestBruceModModel = async (data) => {
   // Ejemplo básico de inserción (recuerda manejar errores adecuadamente)
   // console.log("Modelo", data);
   // console.log(typeof etapa);
-
+  // numeroetapa
   const dt1 = selecionarEtapa(etapas);
 
   const { velocidad, grados, tiempo, vodos, etapa } = dt1;
   // console.log(dt1);
-
   const query =
     "INSERT INTO etapas (elefinal, velocidadfinal, numeroetapa, vodos, saturacionvodos, tiempo) VALUES ($1, $2, $3, $4, $5, $6)";
 
   const values = [grados, velocidad, etapa, vodos, saturacionvodos, tiempo];
 
   const client = await pool.connect(); // Conexión a la base de datos
+
   // console.log("conecto");
   try {
     const result = await client.query(query, values);
@@ -125,7 +125,6 @@ export const crearTestBruceModModel = async (data) => {
     }
   } catch (error) {
     // console.error("Error al ejecutar la consulta SQL:", error);
-
     return res.status(203).json({
       mensaje: "Error al registrar el test",
       rp: "no",
