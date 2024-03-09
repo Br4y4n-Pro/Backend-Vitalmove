@@ -163,3 +163,72 @@ const selecionarEtapa = (etapa) => {
     return { velocidad: 10.5, grados: 22, tiempo: 3, vodos: 19.1, etapa: 9 };
   }
 };
+
+// export const crearHistorialUserModel = async (data) => {
+
+//   const { fcr, tiempo, distancia, fcm } = data;
+//   let barevodos = "";
+
+//   // Ejemplo básico de inserción (recuerda manejar errores adecuadamente)
+//   console.log("Modelo", data);
+
+//   const Consumov = (0.1 * (distancia / tiempo) + 3.5).toFixed(2);
+//   // console.log(Consumov);
+//   if (Consumov <= 10.99) {
+//     // console.log("aqui");
+//     barevodos = "Bajo";
+//   } else if (Consumov >= 16.01) {
+//     // console.log("aca");
+//     barevodos = "excelente";
+//   } else {
+//     // console.log("DONDE ");|
+//     barevodos = "Bueno";
+//   }
+//   console.log(barevodos);
+//   const query =
+//     "INSERT INTO caminata (fcr, tiempo, distancia, fcm, consumovo2,barevodos) VALUES ($1, $2, $3, $4,$5,$6)";
+//   const values = [fcr, tiempo, distancia, fcm, Consumov, barevodos];
+//   console.log(fcr, tiempo, distancia, fcm, Consumov, barevodos);
+//   const res = await pool.query(query, values);
+//   console.log("res  em modelo", res);
+//   return res;
+// };
+
+export const crearHistorialUserModel = async (data) => {
+  const { peso, talla, imc } = data;
+  let imcdescripcion = "";
+  console.log("Datos:", { peso, talla, imc });
+
+  // Calcular el valor de IMC como peso dividido por la talla al cuadrado
+  const calculoImc = peso / (talla * talla);
+
+  // Determinar la descripción de IMC según el valor de IMC
+  if (calculoImc < 18.5) {
+    imcdescripcion = "Bajo peso";
+  } else if (calculoImc >= 18.5 && calculoImc <= 24.9) {
+    imcdescripcion = "Normal";
+  } else if (calculoImc >= 25.0 && calculoImc <= 29.9) {
+    imcdescripcion = "Sobrepeso";
+  } else if (calculoImc >= 30.0 && calculoImc <= 34.9) {
+    imcdescripcion = "Obesidad grado 1";
+  } else if (calculoImc >= 35.0 && calculoImc <= 39.9) {
+    imcdescripcion = "Obesidad grado 2";
+  } else {
+    imcdescripcion = "Obesidad grado 3";
+  }
+
+  // Preparar la consulta SQL para insertar en la tabla historial
+  const query =
+    "INSERT INTO historial (peso, imc, imcdescripcion) VALUES ($1, $2, $3)";
+  const values = [peso, imc, imcdescripcion];
+
+  try {
+    // Ejecutar la consulta y enviar los datos a la tabla historial
+    const res = await pool.query(query, values);
+    console.log("Res en modelo", res);
+    return res;
+  } catch (error) {
+    console.error("Error al insertar datos en historial:", error);
+    throw error; // Propagar el error para que sea manejado por quien llame a esta función
+  }
+};

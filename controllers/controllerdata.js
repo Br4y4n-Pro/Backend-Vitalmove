@@ -4,6 +4,7 @@
 
 // PARA EL BUSCADOR SE VA A DAR DOS PARAMETROS DNI Y NOMBRE Y VA A SER UNA QUERY PARA MAS RAPIDEZ
 import { uploadImagenS3Model } from "../models/s3.js";
+import { crearHistorialUserModel } from "../models/testVItalMoveModel.js";
 import {
   addUserModel,
   getAllUsersModel,
@@ -159,3 +160,59 @@ export const prueba = async (req, res) => {
 
   res.status(200).json({ url: urlImagen });
 };
+
+export const HistorialNewUser = async (req, res) => {
+  // console.log("Recibiendo solicitud POST en bruce");
+
+  const body = req.body;
+
+  // console.log("Este es el body", body);
+  // hasta awui llega todo bien
+  try {
+    const newtestB = await crearHistorialUserModel(body);
+    // console.log(newtestB);
+
+    console.log(`este es el controlador y lo que obtuvo del modelo es`);
+
+    if (newtestB === null) {
+      res
+        .status(401)
+        .json({ error: "No se pudo crear el historial ", rp: "no" });
+    }
+    if (newtestB instanceof Error) {
+      res.status(401).json({ error: newtestB.message });
+    } else {
+      res
+        .status(201)
+        .json({ mensaje: "historial registrado exitosamente", rp: "si" });
+    }
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error del servidor", error: error });
+  }
+};
+
+// export const HistorialNewUser = async (req, res) => {
+//   console.log("Recibiendo solicitud POST en Historial new user ");
+//   const body = req.body;
+//   console.log(body, "-------------------------", req.file);
+//   const urlImagen = await uploadImagenS3Model(req.file);
+//   console.log(urlImagen, "urlImagen");
+//   try {
+//     const newUser = await addUserModel(body, urlImagen);
+//     console.log(`este es el controlador y lo que obtuvo del modelo es`);
+//     console.log(newUser);
+
+//     if (newUser === null) {
+//       res.status(401).json({ error: "No se pudo guardar el hiatorial " });
+//     }
+//     if (newUser.rp === "no") {
+//       res.status(203).json(newUser);
+//     } else {
+//       res
+//         .status(201)
+//         .json({ mensaje: "Usuario registrado exitosamente", rp: "si" });
+//     }
+//   } catch (error) {
+//     res.status(500).json({ mensaje: "Error del servidor", error: error });
+//   }
+// };
