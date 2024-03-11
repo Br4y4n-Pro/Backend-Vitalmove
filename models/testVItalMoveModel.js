@@ -76,13 +76,9 @@ export const caminataOnePersonModel = async (idpersona) => {
         [idpersona]
       );
       console.log(caminataUser);
-      const dataAllCaminataTest = {
-        cantidad: caminataUser.rowCount,
-        datos: caminataUser.rows,
-      }; //<--- devuelve un array de objetos (Usuarios) :D
-      //   console.log(allCaminataTest);
 
-      return dataAllCaminataTest;
+      return caminataUser.rows; //<--- devuelve un array de objetos (Usuarios) :D
+      //   console.log(allCaminataTest);
     } finally {
       client.release(); // Liberar cliente de la base de datos
     }
