@@ -228,3 +228,36 @@ export const crearHistorialUserModel = async (data) => {
     throw error; // Propagar el error para que sea manejado por quien llame a esta función
   }
 };
+
+
+export const mesRealizoModel = async (idusuario)=>{
+  const query =  `WITH meses AS (
+    SELECT generate_series(
+        (SELECT DATE_TRUNC('month', MIN(fecha)) FROM tests WHERE idusuario = $1),
+        (SELECT DATE_TRUNC('month', MAX(fecha)) FROM tests WHERE idusuario = $1),
+        INTERVAL '1 month'
+    ) AS mes
+)
+SELECT
+    to_char(m.mes, 'YYYY-MM') AS mes,
+    CASE WHEN COUNT(t.idtest) > 0 THEN 1 ELSE 0 END AS 
+FROM
+    meses m
+LEFT JOIN
+    tests t ON DATE_TRUNC('month', t.fecha) = m.mes AND t.idusuario = $1
+GROUP BY
+    m.mes
+ORDER BY
+    m.mes
+`
+const client = await pool.connect(); // Conexión a la base de datos
+
+try {
+  const res = await client.query(query,[idusuario])
+    // console.log("Res en modelo", res);
+    return res;
+  } catch (error) {
+    console.error("Error al insertar datos en historial:", error);
+    throw error; // Propagar el error para que sea manejado por quien llame a esta función
+  }
+};

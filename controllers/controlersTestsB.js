@@ -1,4 +1,4 @@
-import { caminataOnePersonModel, getAllCaminataTestsModels } from "../models/testVItalMoveModel.js";
+import { caminataOnePersonModel, getAllCaminataTestsModels, mesRealizoModel } from "../models/testVItalMoveModel.js";
 
 export const getAllCaminataTests = async (req, res) => {
   try {
@@ -23,4 +23,12 @@ export const caminataOnePerson = async (req,res) => {
     .status(500)
     .json({ mensaje: "Error del servidor", error:e })
   }
+};
+
+
+export const mesRealizo = async (req,res)=>{
+  const resp = await mesRealizoModel(req.params.id);
+  console.log(resp.rows)
+  return res.status(200).json(resp.rows);
+
 };

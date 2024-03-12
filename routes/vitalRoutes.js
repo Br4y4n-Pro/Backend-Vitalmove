@@ -15,6 +15,7 @@ import { uploadDisk, uploadBuffer } from "../models/multerconfig.js";
 import {
   caminataOnePerson,
   getAllCaminataTests,
+  mesRealizo,
 } from "../controllers/controlersTestsB.js";
 import {
   crearCaminata,
@@ -41,6 +42,10 @@ router.get("/allUser", allUser);
 
 router.post("/crearHisotrial", crearHistorialUserModel);
 //Tests
+
+router.get("/mesesCaminata/:id", mesRealizo);
+
+
 
 router.get("/allCaminata/:id", caminataOnePerson);
 router.post("/crearCaminata", crearCaminata);
