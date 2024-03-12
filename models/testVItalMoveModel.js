@@ -240,7 +240,7 @@ export const mesRealizoModel = async (idusuario)=>{
 )
 SELECT
     to_char(m.mes, 'YYYY-MM') AS mes,
-    CASE WHEN COUNT(t.idtest) > 0 THEN 1 ELSE 0 END AS 
+    CASE WHEN COUNT(t.idtest) > 0 THEN 1 ELSE 0 END AS testrealizado
 FROM
     meses m
 LEFT JOIN
@@ -257,7 +257,7 @@ try {
     // console.log("Res en modelo", res);
     return res;
   } catch (error) {
-    console.error("Error al insertar datos en historial:", error);
+    console.error("Error al sacar datos en las fechas:", error);
     throw error; // Propagar el error para que sea manejado por quien llame a esta función
   }
 };
