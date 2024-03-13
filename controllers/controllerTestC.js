@@ -1,15 +1,23 @@
-import { crearTestBruceModModel, crearTestCaminataModel } from "../models/testVItalMoveModel.js";
+import {
+  crearTestBruceModModel,
+  crearTestCaminataModel,
+  registroTestModel,
+} from "../models/testVItalMoveModel.js";
 
 export const crearCaminata = async (req, res) => {
   try {
-    // console.log(req.body);
+    console.log(req.body);
 
     const caminatadata = await crearTestCaminataModel(req.body);
-
-    console.log("ca", caminatadata.rows);
-
+    const idcaminata = caminatadata.rows[0].idcaminata;
+    const { idusuario } = req.body;
+    console.log("ca", idcaminata, idusuario);
+    const registronTests = await registroTestModel(idcaminata, idusuario);
+    console.log(registronTests);
     if (caminatadata.rowCount === 1) {
-      res.status(200).json({ ...req.body, rp: "si" });
+      res
+        .status(200)
+        .json({ ...req.body, rp: "si", mensaje: "Registro de test exitoso" });
     } else {
       res.status(203).json({
         mensaje: "Error no se pudo ingresar el test",
