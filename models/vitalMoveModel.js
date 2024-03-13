@@ -66,7 +66,7 @@ export const addUserModel = async (data, linkImagen) => {
     ) 
     VALUES (
       $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20
-    );`;
+    ) RETURNING idusuario`;
 
   const requiredValues = [
     actividadsemana,
@@ -230,6 +230,28 @@ export const loginUserModel = async (data) => {
     };
   }
 };
+
+
+export const loginHistorialModel = async (idUsuario) => {
+    try {
+      const client = await pool.connect(); // Conexión a la base de datos
+      console.log(idUsuario, ' modelo antes de')
+      const result = await client.query(
+        'SELECT * FROM historial WHERE idusuario = $1 ORDER BY fecha DESC',[idUsuario]
+        );
+        console.log(result.rows)
+        return result.rows
+    } catch (error) {
+      return {
+      mensaje: "Error al sacar el historial",
+      rp: "no",
+      error:error
+
+    }
+   }
+  };
+
+
 export const getAllUsersModel = async () => {
   try {
     const client = await pool.connect(); // Conexión a la base de datos

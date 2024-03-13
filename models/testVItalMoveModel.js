@@ -190,77 +190,60 @@ const selecionarEtapa = (etapa) => {
 //   return res;
 // };
 
-export const crearHistorialUserModel = async (data) => {
-  const { peso, talla, imc } = data;
-  let imcdescripcion = "";
-  console.log("Datos:", { peso, talla, imc });
+export const crearHistorialUserModel = async (data,idusuario) => {
+console.log(data)
+  const resultados = calculoImc(data);
+  console.log(resultados)
+const {imc,imcdescripcion,peso} = resultados
 
-  // Calcular el valor de IMC como peso dividido por la talla al cuadrado
-  const calculoImc = peso / (talla * talla);
-
-  // Determinar la descripción de IMC según el valor de IMC
-  if (calculoImc < 18.5) {
-    imcdescripcion = "Bajo peso";
-  } else if (calculoImc >= 18.5 && calculoImc <= 24.9) {
-    imcdescripcion = "Normal";
-  } else if (calculoImc >= 25.0 && calculoImc <= 29.9) {
-    imcdescripcion = "Sobrepeso";
-  } else if (calculoImc >= 30.0 && calculoImc <= 34.9) {
-    imcdescripcion = "Obesidad grado 1";
-  } else if (calculoImc >= 35.0 && calculoImc <= 39.9) {
-    imcdescripcion = "Obesidad grado 2";
-  } else {
-    imcdescripcion = "Obesidad grado 3";
-  }
 
   // Preparar la consulta SQL para insertar en la tabla historial
   const query =
-    "INSERT INTO historial (peso, imc, imcdescripcion) VALUES ($1, $2, $3)";
-  const values = [peso, imc, imcdescripcion];
+    "INSERT INTO historial (peso, imc, imcdescripcion,idusuario) VALUES ($1, $2, $3, $4)";
+  const values = [peso, imc, imcdescripcion,idusuario];
 
   try {
     // Ejecutar la consulta y enviar los datos a la tabla historial
     const res = await pool.query(query, values);
     console.log("Res en modelo", res);
-    return res;
+    return {mensaje: 'Se registro exitosamente', rp:'si'};
   } catch (error) {
     console.error("Error al insertar datos en historial:", error);
     throw error; // Propagar el error para que sea manejado por quien llame a esta función
   }
 };
 
+const calculoImc = ( data ) => {
+  const { peso, talla } = data;
 
-// export const mesRealizoModel = async (idusuario)=>{
-//   const query =  `WITH meses AS (
-//     SELECT generate_series(
-//         (SELECT DATE_TRUNC('month', MIN(fecha)) FROM tests WHERE idusuario = $1),
-//         (SELECT DATE_TRUNC('month', MAX(fecha)) FROM tests WHERE idusuario = $1),
-//         INTERVAL '1 month'
-//     ) AS mes
-// )
-// SELECT
-//     to_char(m.mes, 'YYYY-MM') AS mes,
-//     CASE WHEN COUNT(t.idtest) > 0 THEN 1 ELSE 0 END AS testrealizado
-// FROM
-//     meses m
-// LEFT JOIN
-//     tests t ON DATE_TRUNC('month', t.fecha) = m.mes AND t.idusuario = $1
-// GROUP BY
-//     m.mes
-// ORDER BY
-//     m.mes
-// `
-// const client = await pool.connect(); // Conexión a la base de datos
+  const calculoImc = peso / (talla * talla);
+  if (calculoImc < 0) {
+    return {mensaje: 'Error al calcular el imc', rp: 'no'}
+  }
+  // Determinar la descripción de IMC según el valor de IMC
+  if (calculoImc < 18.5) {
+    return {imcdescripcion: "Bajo peso", imc:calculoImc, peso:peso}
+  } 
+   if (calculoImc >= 18.5 && calculoImc <= 24.9) {
+    return {imcdescripcion: "Normal", imc: calculoImc, peso:peso}
 
-// try {
-//   const res = await client.query(query,[idusuario])
-//     // console.log("Res en modelo", res);
-//     return res;
-//   } catch (error) {
-//     console.error("Error al sacar datos en las fechas:", error);
-//     throw error; // Propagar el error para que sea manejado por quien llame a esta función
-//   }
-// };
+  } 
+   if (calculoImc >= 25.0 && calculoImc <= 29.9) {
+    return {imcdescripcion: "Sobrepeso", imc: calculoImc, peso:peso}
+    
+  } 
+   if (calculoImc >= 30.0 && calculoImc <= 34.9) {
+    return {imcdescripcion: "Obesidad grado 1", imc: calculoImc, peso:peso}
+
+  } 
+   if (calculoImc >= 35.0 && calculoImc <= 39.9) {
+    return {imcdescripcion: "Obesidad grado 2", imc: calculoImc, peso:peso}
+
+  } else {
+    return {imcdescripcion: "Obesidad grado 3", imc: calculoImc, peso:peso}
+
+  }
+}
 
 export const mesRealizoModel = async (idusuario)=>{
   const query =  `WITH meses AS (
@@ -294,10 +277,36 @@ const client = await pool.connect(); // Conexión a la base de datos
 try {
   const res = await client.query(query,[idusuario])
     // console.log("Res en modelo", res);
-    return res;
+    return res.rows;
   } catch (error) {
     console.error("Error al sacar datos en las fechas:", error);
     throw error; // Propagar el error para que sea manejado por quien llame a esta función
+  } finally {
+    client.release(); // Liberar cliente de la base de datos
+
   }
 };
 
+
+
+export const notasDiariasModel = async( id ) => {
+   const query =  `
+    SELECT descripcion FROM notasdiarias WHERE idnota = $1
+   `
+
+const client = await pool.connect();
+
+  try {
+    const res  = await client.query(query,[id])
+    if (res.rowCount === 0) {
+      return {rp: 'no',
+        mensaje: 'No hay nada diaria con ese id'}
+    }else{
+    return res.rows[0];
+    }
+
+  } catch (e) {
+    throw e
+  }
+
+}

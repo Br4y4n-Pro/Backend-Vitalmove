@@ -9,13 +9,15 @@ import {
   updateUser,
   prueba,
   getUserInfo,
-  HistorialNewUser,
+  loginHistorial,
+  
 } from "../controllers/controllerdata.js";
 import { uploadDisk, uploadBuffer } from "../models/multerconfig.js";
 import {
   caminataOnePerson,
   getAllCaminataTests,
   mesRealizo,
+  notasDiarias,
 } from "../controllers/controlersTestsB.js";
 import {
   crearCaminata,
@@ -34,17 +36,17 @@ router.post("/subida", uploadBuffer, prueba);
 router.post("/addUser", uploadBuffer, addUserNew);
 // HistorialNewUser;
 router.post("/login", loginUser); // Ruta para el inicio de sesión
+router.get("/loginHistorial/:id",loginHistorial);
 router.get("/user", getUserInfo); // Ruta para obtener información del usuariorouter.get('/allUser', allUser)
 router.get("/buscadorUser", searchUsers);
 router.delete("/deleteUser", deleteUser);
 router.put("/updateUser", updateUser);
 router.get("/allUser", allUser);
 
-router.post("/crearHisotrial", crearHistorialUserModel);
 //Tests
 
 router.get("/mesesCaminata/:id", mesRealizo);
-
+router.get('/notasdiarias/:id',notasDiarias);
 
 
 router.get("/allCaminata/:id", caminataOnePerson);

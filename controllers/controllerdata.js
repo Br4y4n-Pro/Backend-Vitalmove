@@ -12,6 +12,7 @@ import {
   updateUserModel,
   getUserInfoModel,
   loginUserModel,
+  loginHistorialModel,
 } from "../models/vitalMoveModel.js";
 
 export const addUserNew = async (req, res) => {
@@ -22,9 +23,10 @@ export const addUserNew = async (req, res) => {
   console.log(urlImagen, "urlImagen");
   try {
     const newUser = await addUserModel(body, urlImagen);
-    console.log(`este es el controlador y lo que obtuvo del modelo es`);
-    console.log(newUser);
-
+    console.log( 'El id returning',  newUser.rows[0].idusuario)
+    console.log(newUser.rowCount, newUser.command);
+    const historial = await crearHistorialUserModel( body,newUser.rows[0].idusuario)
+    console.log(historial)
     if (newUser === null) {
       res.status(401).json({ error: "No se pudo crear el usuario" });
     }
@@ -191,28 +193,25 @@ export const HistorialNewUser = async (req, res) => {
   }
 };
 
-// export const HistorialNewUser = async (req, res) => {
-//   console.log("Recibiendo solicitud POST en Historial new user ");
-//   const body = req.body;
-//   console.log(body, "-------------------------", req.file);
-//   const urlImagen = await uploadImagenS3Model(req.file);
-//   console.log(urlImagen, "urlImagen");
-//   try {
-//     const newUser = await addUserModel(body, urlImagen);
-//     console.log(`este es el controlador y lo que obtuvo del modelo es`);
-//     console.log(newUser);
 
-//     if (newUser === null) {
-//       res.status(401).json({ error: "No se pudo guardar el hiatorial " });
-//     }
-//     if (newUser.rp === "no") {
-//       res.status(203).json(newUser);
-//     } else {
-//       res
-//         .status(201)
-//         .json({ mensaje: "Usuario registrado exitosamente", rp: "si" });
-//     }
-//   } catch (error) {
-//     res.status(500).json({ mensaje: "Error del servidor", error: error });
-//   }
-// };
+export const loginHistorial = async (req,res) =>{
+  console.log(req.params.id)
+  try {
+    const result = await loginHistorialModel(req.params.id);
+    console.log("first", result);
+    if (result.rp == "no") {
+      return res.status(203).json(result);
+    }
+    if (result instanceof Error) {
+      return res.status(401).json({ error: result.message });
+    } else {
+      res.status(200).json(result);
+    }
+  } catch (error) {
+    return res.status(203).json({
+      mensaje: "Error del Servidor",
+      rp: "no",
+      error
+    });
+  }
+}

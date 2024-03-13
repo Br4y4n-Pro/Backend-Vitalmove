@@ -1,4 +1,4 @@
-import { caminataOnePersonModel, getAllCaminataTestsModels, mesRealizoModel } from "../models/testVItalMoveModel.js";
+import { caminataOnePersonModel, getAllCaminataTestsModels, mesRealizoModel, notasDiariasModel } from "../models/testVItalMoveModel.js";
 
 export const getAllCaminataTests = async (req, res) => {
   try {
@@ -28,7 +28,17 @@ export const caminataOnePerson = async (req,res) => {
 
 export const mesRealizo = async (req,res)=>{
   const resp = await mesRealizoModel(req.params.id);
-  console.log(resp.rows)
-  return res.status(200).json(resp.rows);
+  console.log(resp)
+  return res.status(200).json(resp);
 
 };
+
+export const notasDiarias = async (req,res) =>{
+  try {
+    const resp =  await notasDiariasModel(req.params.id);
+      return res.status(200).json(resp)
+  } catch (error) {
+    throw error
+  }
+  
+}
