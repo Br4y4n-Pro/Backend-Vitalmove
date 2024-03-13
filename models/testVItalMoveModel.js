@@ -10,6 +10,7 @@ const pool = new Pool(CONFIG_DB);
 
 export const crearTestCaminataModel = async (data) => {
   const { fcr, tiempo, distancia, fcm } = data;
+  console.log(data.idusuario);
   let barevodos = "";
 
   // Ejemplo básico de inserción (recuerda manejar errores adecuadamente)
@@ -29,12 +30,22 @@ export const crearTestCaminataModel = async (data) => {
   }
   console.log(barevodos);
   const query =
-    "INSERT INTO caminata (fcr, tiempo, distancia, fcm, consumovo2,barevodos) VALUES ($1, $2, $3, $4,$5,$6)";
+    "INSERT INTO caminata (fcr, tiempo, distancia, fcm, consumovo2,barevodos) VALUES ($1, $2, $3, $4,$5,$6) RETURNING idcaminata";
   const values = [fcr, tiempo, distancia, fcm, Consumov, barevodos];
   console.log(fcr, tiempo, distancia, fcm, Consumov, barevodos);
   const res = await pool.query(query, values);
   console.log("res  em modelo", res);
   return res;
+};
+
+export const registroTestModel = async (idtets, idusuario) => {
+  try {
+    const query = "INSERT INTO tests (fkcaminata,idusuario) VALUES ($1,$2)";
+    const result = await pool.query(query, [idtets, idusuario]);
+    return result;
+  } catch (e) {
+    return { rp: "no", error, mensaje: "Error al insertar en la tabla tests" };
+  }
 };
 
 export const getAllCaminataTestsModels = async () => {
