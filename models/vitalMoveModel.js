@@ -9,7 +9,7 @@ const pool = new Pool(CONFIG_DB);
 
 // Prueba de conexion a la base de datos
 export const getPgVersion = async () => {
-  const client = await pool.connect();
+  const client = await pool.connect();          //aqui 
   try {
     const result = await client.query("SELECT version()");
     console.log(result.rows[0]);
