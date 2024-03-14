@@ -249,7 +249,7 @@ export const loginHistorialModel = async (idUsuario) => {
 
     }
    }
-  };
+  };  
 
 
 export const getAllUsersModel = async () => {
