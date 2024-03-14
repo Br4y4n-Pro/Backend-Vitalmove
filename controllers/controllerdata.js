@@ -23,10 +23,13 @@ export const addUserNew = async (req, res) => {
   console.log(urlImagen, "urlImagen");
   try {
     const newUser = await addUserModel(body, urlImagen);
-    console.log( 'El id returning',  newUser.rows[0].idusuario)
+    console.log("El id returning", newUser.rows[0].idusuario);
     console.log(newUser.rowCount, newUser.command);
-    const historial = await crearHistorialUserModel( body,newUser.rows[0].idusuario)
-    console.log(historial)
+    const historial = await crearHistorialUserModel(
+      body,
+      newUser.rows[0].idusuario
+    );
+    console.log(historial);
     if (newUser === null) {
       res.status(401).json({ error: "No se pudo crear el usuario" });
     }
@@ -193,9 +196,8 @@ export const HistorialNewUser = async (req, res) => {
   }
 };
 
-
-export const loginHistorial = async (req,res) =>{
-  console.log(req.params.id)
+export const loginHistorial = async (req, res) => {
+  console.log(req.params.id);
   try {
     const result = await loginHistorialModel(req.params.id);
     console.log("first", result);
@@ -211,7 +213,7 @@ export const loginHistorial = async (req,res) =>{
     return res.status(203).json({
       mensaje: "Error del Servidor",
       rp: "no",
-      error
+      error,
     });
   }
-}
+};

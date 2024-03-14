@@ -1,19 +1,27 @@
 import {
   crearTestBruceModModel,
   crearTestCaminataModel,
+  registroRecomendacionModel,
   registroTestModel,
 } from "../models/testVItalMoveModel.js";
 
 export const crearCaminata = async (req, res) => {
   try {
-    console.log(req.body);
+    // console.log(req.body);
 
     const caminatadata = await crearTestCaminataModel(req.body);
+
     const idcaminata = caminatadata.rows[0].idcaminata;
     const { idusuario } = req.body;
+
     console.log("ca", idcaminata, idusuario);
+
     const registronTests = await registroTestModel(idcaminata, idusuario);
-    console.log(registronTests);
+    console.log(registronTests, "esto es idtests");
+
+    console.log(req.body.descripcion, registronTests);
+    await registroRecomendacionModel(registronTests, req.body.descripcion);
+
     if (caminatadata.rowCount === 1) {
       res
         .status(200)

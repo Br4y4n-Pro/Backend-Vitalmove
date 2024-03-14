@@ -10,11 +10,11 @@ const pool = new Pool(CONFIG_DB);
 
 export const crearTestCaminataModel = async (data) => {
   const { fcr, tiempo, distancia, fcm } = data;
-  console.log(data.idusuario);
+  // console.log(data);
   let barevodos = "";
 
   // Ejemplo básico de inserción (recuerda manejar errores adecuadamente)
-  console.log("Modelo", data);
+  // console.log("Modelo", data);
 
   const Consumov = (0.1 * (distancia / tiempo) + 3.5).toFixed(2);
   // console.log(Consumov);
@@ -32,17 +32,20 @@ export const crearTestCaminataModel = async (data) => {
   const query =
     "INSERT INTO caminata (fcr, tiempo, distancia, fcm, consumovo2,barevodos) VALUES ($1, $2, $3, $4,$5,$6) RETURNING idcaminata";
   const values = [fcr, tiempo, distancia, fcm, Consumov, barevodos];
-  console.log(fcr, tiempo, distancia, fcm, Consumov, barevodos);
+  // console.log(fcr, tiempo, distancia, fcm, Consumov, barevodos);
   const res = await pool.query(query, values);
-  console.log("res  em modelo", res);
+  // console.log("res  em modelo", res);
   return res;
 };
 
 export const registroTestModel = async (idtets, idusuario) => {
+  console.log(idtets, idusuario);
   try {
-    const query = "INSERT INTO tests (fkcaminata,idusuario) VALUES ($1,$2)";
+    const query =
+      "INSERT INTO tests (fkcaminata,idusuario) VALUES ($1,$2) RETURNING idtest";
     const result = await pool.query(query, [idtets, idusuario]);
-    return result;
+    console.log(result.rows[0]);
+    return result.rows[0].idtest;
   } catch (e) {
     return { rp: "no", error, mensaje: "Error al insertar en la tabla tests" };
   }
@@ -307,5 +310,21 @@ export const notasDiariasModel = async (id) => {
     }
   } catch (e) {
     throw e;
+  }
+};
+
+export const registroRecomendacionModel = async (idtests, descripcion) => {
+  const query =
+    "INSERT INTO recomendaciones (descripcion,idtests) VALUES ($1, $2)";
+  const values = [descripcion, idtests];
+
+  try {
+    // Ejecutar la consulta y enviar los datos a la tabla historial
+    const res = await pool.query(query, values);
+    console.log("Res en modelo", res);
+    return { mensaje: "Se registro exitosamente", rp: "si" };
+  } catch (error) {
+    console.error("Error al insertar datos en historial:", error);
+    throw error; // Propagar el error para que sea manejado por quien llame a esta función
   }
 };
