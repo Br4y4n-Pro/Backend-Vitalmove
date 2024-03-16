@@ -32,7 +32,7 @@ export const crearTestCaminataModel = async (data) => {
   const query =
     "INSERT INTO caminata (fcr, tiempo, distancia, fcm, consumovo2,barevodos) VALUES ($1, $2, $3, $4,$5,$6) RETURNING idcaminata";
   const values = [fcr, tiempo, distancia, fcm, Consumov, barevodos];
-  // console.log(fcr, tiempo, distancia, fcm, Consumov, barevodos);
+  console.log(fcr, tiempo, distancia, fcm, Consumov, barevodos);
   const res = await pool.query(query, values);
   // console.log("res  em modelo", res);
   return res;
@@ -42,7 +42,7 @@ export const registroTestModel = async (idtets, idusuario) => {
   console.log(idtets, idusuario);
   try {
     const query =
-      "INSERT INTO tests (fkcaminata,idusuario) VALUES ($1,$2) RETURNING idtest";
+      "INSERT INTO tests (fkcaminata,idusuario,fkbruce) VALUES ($1,$2,$3) RETURNING idtest";
     const result = await pool.query(query, [idtets, idusuario]);
     console.log(result.rows[0]);
     return result.rows[0].idtest;
@@ -50,6 +50,20 @@ export const registroTestModel = async (idtets, idusuario) => {
     return { rp: "no", error, mensaje: "Error al insertar en la tabla tests" };
   }
 };
+
+export const regisTestModel = async (idtets, idusuario) => {
+  console.log(idtets, idusuario);
+  try {
+    const query =
+      "INSERT INTO tests (fkbruce, idusuario) VALUES ($1,$2) RETURNING idtest";
+    const result = await pool.query(query, [idtets, idusuario]);
+    console.log(result.rows[0]);
+    return result.rows[0].idtest;
+  } catch (e) {
+    return { rp: "no", error, mensaje: "Error al insertar en la tabla tests qwa" };
+  }
+};
+
 
 export const getAllCaminataTestsModels = async () => {
   try {
@@ -116,7 +130,7 @@ export const crearTestBruceModModel = async (data) => {
   const { velocidad, grados, tiempo, vodos, etapa } = dt1;
   // console.log(dt1);
   const query =
-    "INSERT INTO etapas (elefinal, velocidadfinal, numeroetapa, vodos, saturacionvodos, tiempo) VALUES ($1, $2, $3, $4, $5, $6)";
+    "INSERT INTO etapas (elefinal, velocidadfinal, numeroetapa, vodos, saturacionvodos, tiempo) VALUES ($1, $2, $3, $4, $5, $6)RETURNING idetapa";
 
   const values = [grados, velocidad, etapa, vodos, saturacionvodos, tiempo];
 

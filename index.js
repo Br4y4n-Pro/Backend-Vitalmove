@@ -20,7 +20,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 app.use('/',routers);
-const puerto = process.env.PORT || 3050;
+const puerto = process.env.PORT || 302;
 app.listen(puerto, () => {
   console.log(`Servidor escuchando en http://localhost:${puerto}`);
 });
