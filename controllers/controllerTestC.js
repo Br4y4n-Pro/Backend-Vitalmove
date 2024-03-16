@@ -3,6 +3,7 @@ import {
   crearTestCaminataModel,
   registroRecomendacionModel,
   registroTestModel,
+  regisTestModel,
 } from "../models/testVItalMoveModel.js";
 
 export const crearCaminata = async (req, res) => {
@@ -43,12 +44,24 @@ export const crearCaminata = async (req, res) => {
 export const crearTestBruce = async (req, res) => {
   // console.log("Recibiendo solicitud POST en bruce");
 
-  const body = req.body;
+  // const body = req.body;
 
   // console.log("Este es el body", body);
   // hasta awui llega todo bien
   try {
-    const newtestB = await crearTestBruceModModel(body);
+    const newtestB = await crearTestBruceModModel(req.body);
+
+    const idetapa = newtestB.rows[0].idetapa;
+
+    const { idusuario } = req.body;
+
+    console.log("bruce ", idetapa, idusuario);
+
+    const registronTests = await regisTestModel(idetapa, idusuario);
+    console.log(registronTests, "esto es idtests");
+
+    console.log(req.body.descripcion, registronTests);
+    await registroRecomendacionModel(registronTests, req.body.descripcion);
     // console.log(newtestB);
 
     console.log(`este es el controlador y lo que obtuvo del modelo es`);
