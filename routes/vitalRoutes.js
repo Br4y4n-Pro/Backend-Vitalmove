@@ -14,7 +14,9 @@ import {
 } from "../controllers/controllerdata.js";
 import { uploadDisk, uploadBuffer } from "../models/multerconfig.js";
 import {
+  BruceOnePerson,
   caminataOnePerson,
+  getAllBruceTests,
   getAllCaminataTests,
   mesRealizo,
   notasDiarias,
@@ -49,9 +51,14 @@ router.get("/mesesCaminata/:id", mesRealizo);
 router.get('/notasdiarias/:id',notasDiarias);
 
 
+router.get("/allCaminata", getAllCaminataTests);
 router.get("/allCaminata/:id", caminataOnePerson);
 router.post("/crearCaminata", crearCaminata);
-router.get("/allCaminata", getAllCaminataTests);
+
+router.get("/allBruce", getAllBruceTests);
+router.get("/allBruce/:id", BruceOnePerson);
 router.post("/crearTestBruce", crearTestBruce);
+
+
 
 export default router;

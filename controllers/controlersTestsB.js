@@ -1,12 +1,24 @@
-import { caminataOnePersonModel, getAllCaminataTestsModels, mesRealizoModel, notasDiariasModel } from "../models/testVItalMoveModel.js";
+import { BruceOnePersonModel, caminataOnePersonModel, getAllBruceTestsModels, getAllCaminataTestsModels, mesRealizoModel, notasDiariasModel } from "../models/testVItalMoveModel.js";
 
 export const getAllCaminataTests = async (req, res) => {
   try {
-    const allUserData = await getAllCaminataTestsModels();
-    res.status(200).json(allUserData);
+    const allCaminatasData = await getAllCaminataTestsModels();
+    res.status(200).json(allCaminatasData);
   } catch (error) {
     return res.status(203).json({
-      mensaje: "Error al traer todos los usuarios: ",
+      mensaje: "Error al traer todos las caminatas: ",
+      rp: "no",
+    });
+  }
+};
+
+export const getAllBruceTests = async (req, res) => {
+  try {
+    const allBruceData = await getAllBruceTestsModels();
+    res.status(200).json(allBruceData);
+  } catch (error) {
+    return res.status(203).json({
+      mensaje: "Error al traer todos los test de Bruces: ",
       rp: "no",
     });
   }
@@ -25,6 +37,20 @@ export const caminataOnePerson = async (req,res) => {
   }
 };
 
+
+
+export const BruceOnePerson = async (req,res) => {
+  const idpersona = req.params.id;
+  console.log(idpersona)
+  try {
+    const bruceOne = await BruceOnePersonModel(idpersona);
+    res.status(200).json(bruceOne);
+  } catch(e) {
+    res
+    .status(500)
+    .json({ mensaje: "Error del servidor", error:e })
+  }
+};
 
 export const mesRealizo = async (req,res)=>{
   const resp = await mesRealizoModel(req.params.id);
