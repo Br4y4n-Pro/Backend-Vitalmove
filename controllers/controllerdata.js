@@ -16,6 +16,7 @@ import {
 } from "../models/vitalMoveModel.js";
 
 export const addUserNew = async (req, res) => {
+  
   console.log("Recibiendo solicitud POST en addUserNew");
   const body = req.body;
   console.log(body, "-------------------------", req.file);

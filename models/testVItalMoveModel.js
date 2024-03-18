@@ -60,10 +60,13 @@ export const regisTestModel = async (idtets, idusuario) => {
     console.log(result.rows[0]);
     return result.rows[0].idtest;
   } catch (e) {
-    return { rp: "no", error, mensaje: "Error al insertar en la tabla tests qwa" };
+    return {
+      rp: "no",
+      error,
+      mensaje: "Error al insertar en la tabla tests qwa",
+    };
   }
 };
-
 
 export const getAllCaminataTestsModels = async () => {
   try {
@@ -264,7 +267,6 @@ export const registroRecomendacionModel = async (idtests, descripcion) => {
   try {
     // Ejecutar la consulta y enviar los datos a la tabla historial
     const res = await pool.query(query, values);
-    console.log("Res en modelo", res);
     return { mensaje: "Se registro exitosamente", rp: "si" };
   } catch (error) {
     console.error("Error al insertar datos en historial:", error);
@@ -278,17 +280,17 @@ export const BruceOnePersonModel = async (idpersona) => {
 
     try {
       const bruceUser = await client.query(
-        `SELECT t3.idusuario, t2.fecha,  t1.elefinal,	t1.velocidadfinal,	t1.numeroetapa,	t1.fcr,	t1.fcm,	t1.vodos,	t1.saturacionvodos,	t1.tiempo
+        `SELECT t3.idusuario, t2.fecha,  t1.elefinal,	t1.velocidadfinal,	t1.numeroetapa,	t1.vodos,	t1.saturacionvodos,	t1.tiempo
         FROM tests AS t2 
         JOIN usuario AS t3 ON t2.idusuario = t3.idusuario 
-        JOIN etapas AS t1 ON t2.fkcaminata = t1.idetapa 
+        JOIN etapas AS t1 ON t2.fkbruce = t1.idetapa 
         WHERE t3.idusuario =  $1
         ORDER BY t2.fecha ASC `,
         [idpersona]
       );
       console.log(bruceUser);
 
-      return bruceUser.rows; //<--- devuelve un array de objetos (Usuarios) :D
+      return bruceUser.rows; //<--- devuelve un array de objetos (test de bruces ) :D
       //   console.log(allCaminataTest);
     } finally {
       client.release(); // Liberar cliente de la base de datos
@@ -298,5 +300,34 @@ export const BruceOnePersonModel = async (idpersona) => {
       mensaje: "Error al obtener todos los Tests de Caminata del usuario",
       rp: "no",
     });
+  }
+};
+
+export const allRecomendacionesModel = async () => {
+  try {
+    const result = await pool.query("SELECT * FROM recomendaciones");
+    return result.rows;
+  } catch (error) {
+    return {
+      rp: "no",
+      error,
+      mensaje: "No se pudo traer las recomendaciones",
+    };
+  }
+};
+
+export const recomendacionesOneUserModel = async (idtests) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM recomendaciones WHERE idtests = $1",
+      [idtests]
+    );
+    return result.rows[0];
+  } catch (error) {
+    return {
+      rp: "no",
+      error,
+      mensaje: "No se pudo traer las recomendaciones",
+    };
   }
 };

@@ -10,16 +10,17 @@ import {
   prueba,
   getUserInfo,
   loginHistorial,
-  
 } from "../controllers/controllerdata.js";
 import { uploadDisk, uploadBuffer } from "../models/multerconfig.js";
 import {
   BruceOnePerson,
+  allRecomendaciones,
   caminataOnePerson,
   getAllBruceTests,
   getAllCaminataTests,
   mesRealizo,
   notasDiarias,
+  recomendacionesOneUser,
 } from "../controllers/controlersTestsB.js";
 import {
   crearCaminata,
@@ -38,7 +39,7 @@ router.post("/subida", uploadBuffer, prueba);
 router.post("/addUser", uploadBuffer, addUserNew);
 // HistorialNewUser;
 router.post("/login", loginUser); // Ruta para el inicio de sesión
-router.get("/loginHistorial/:id",loginHistorial);
+router.get("/loginHistorial/:id", loginHistorial);
 router.get("/user", getUserInfo); // Ruta para obtener información del usuariorouter.get('/allUser', allUser)
 router.get("/buscadorUser", searchUsers);
 router.delete("/deleteUser", deleteUser);
@@ -48,8 +49,7 @@ router.get("/allUser", allUser);
 //Tests
 
 router.get("/mesesCaminata/:id", mesRealizo);
-router.get('/notasdiarias/:id',notasDiarias);
-
+router.get("/notasdiarias/:id", notasDiarias);
 
 router.get("/allCaminata", getAllCaminataTests);
 router.get("/allCaminata/:id", caminataOnePerson);
@@ -59,6 +59,7 @@ router.get("/allBruce", getAllBruceTests);
 router.get("/allBruce/:id", BruceOnePerson);
 router.post("/crearTestBruce", crearTestBruce);
 
-
+router.get("/allRecomendaciones", allRecomendaciones);
+router.get('/allRecomendaciones/:id',recomendacionesOneUser)
 
 export default router;

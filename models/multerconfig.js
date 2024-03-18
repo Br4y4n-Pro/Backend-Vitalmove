@@ -39,3 +39,4 @@ const storageBuffer = multer.memoryStorage(); // multer almacena el archivo de f
 export const uploadBuffer = multer({ storage: storageBuffer }).single(
   "imgperfil"
 );
+

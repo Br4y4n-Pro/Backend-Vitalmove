@@ -9,7 +9,7 @@ const pool = new Pool(CONFIG_DB);
 
 // Prueba de conexion a la base de datos
 export const getPgVersion = async () => {
-  const client = await pool.connect();          //aqui 
+  const client = await pool.connect(); //aqui
   try {
     const result = await client.query("SELECT version()");
     console.log(result.rows[0]);
@@ -96,13 +96,13 @@ export const addUserModel = async (data, linkImagen) => {
       rp: "no",
     };
   }
-  console.log("llego")
+  console.log("llego");
 
-  if ( await validateDniExist(dni)) {
-    return{
+  if (await validateDniExist(dni)) {
+    return {
       mensaje: `El número de dni ${dni} ya está registrado`,
       rp: "no",
-    };    
+    };
   }
   console.log("siguio");
   // uso de bcrypt para cifrar la contraseña
@@ -186,12 +186,12 @@ export const addUserModel = async (data, linkImagen) => {
 export const loginUserModel = async (data) => {
   try {
     const { dni, contrasena } = data;
-    console.log(dni);
+    // console.log(dni);
     const client = await pool.connect(); // Conexión a la base de datos
 
     if ((await validateDniExist(dni)) == null) {
       return {
-        mensaje: "El DNI ingresado no está registrado en nuestros servicios",
+        mensaje: "El DNI ingresado no está registrado",
         rp: "no",
       };
     }
@@ -201,7 +201,6 @@ export const loginUserModel = async (data) => {
         "SELECT * FROM usuario WHERE dni = $1",
         [dni]
       );
-      console.log(result);
       const datos = result.rows[0];
       console.log("DAtos de bd :,", datos);
 
@@ -231,26 +230,24 @@ export const loginUserModel = async (data) => {
   }
 };
 
-
 export const loginHistorialModel = async (idUsuario) => {
-    try {
-      const client = await pool.connect(); // Conexión a la base de datos
-      console.log(idUsuario, ' modelo antes de')
-      const result = await client.query(
-        'SELECT * FROM historial WHERE idusuario = $1 ORDER BY fecha DESC',[idUsuario]
-        );
-        console.log(result.rows)
-        return result.rows
-    } catch (error) {
-      return {
+  try {
+    const client = await pool.connect(); // Conexión a la base de datos
+    console.log(idUsuario, " modelo antes de");
+    const result = await client.query(
+      "SELECT * FROM historial WHERE idusuario = $1 ORDER BY fecha DESC",
+      [idUsuario]
+    );
+    console.log(result.rows);
+    return result.rows;
+  } catch (error) {
+    return {
       mensaje: "Error al sacar el historial",
       rp: "no",
-      error:error
-
-    }
-   }
-  };  
-
+      error: error,
+    };
+  }
+};
 
 export const getAllUsersModel = async () => {
   try {
@@ -375,21 +372,21 @@ export const updateUserModel = async (datos) => {
 //------------------------------------------------
 
 export const validateDniExist = async (dniToRegister) => {
-  console.log('entro')
+  console.log("entro");
   const result = await pool.query("SELECT dni FROM usuario where dni = $1", [
     dniToRegister,
   ]);
-  console.log("Dni Existe", result);
+  console.log("Dni Existe", result.rows);
   try {
     const result = await pool.query("SELECT dni FROM usuario where dni = $1", [
-    dniToRegister,
+      dniToRegister,
     ]);
-    console.log(result.rowCount)
+    console.log(result.rowCount);
     if (result.rows.length === 1) {
-      console.log(true)
+      console.log(true);
       return true;
     } else {
-      console.log(null)
+      console.log(null);
       return null; //no se encontro el dni
     }
   } catch (error) {

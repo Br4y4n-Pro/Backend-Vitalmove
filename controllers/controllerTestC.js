@@ -21,8 +21,9 @@ export const crearCaminata = async (req, res) => {
     console.log(registronTests, "esto es idtests");
 
     console.log(req.body.descripcion, registronTests);
-    await registroRecomendacionModel(registronTests, req.body.descripcion);
-
+    if (req.body.descripcion !== "") {
+      await registroRecomendacionModel(registronTests, req.body.descripcion);
+    }
     if (caminatadata.rowCount === 1) {
       res
         .status(200)
@@ -42,12 +43,6 @@ export const crearCaminata = async (req, res) => {
 };
 
 export const crearTestBruce = async (req, res) => {
-  // console.log("Recibiendo solicitud POST en bruce");
-
-  // const body = req.body;
-
-  // console.log("Este es el body", body);
-  // hasta awui llega todo bien
   try {
     const newtestB = await crearTestBruceModModel(req.body);
 
@@ -55,14 +50,16 @@ export const crearTestBruce = async (req, res) => {
 
     const { idusuario } = req.body;
 
-    console.log("bruce ", idetapa, idusuario);
+    // console.log("bruce ", idetapa, idusuario);
 
     const registronTests = await regisTestModel(idetapa, idusuario);
     console.log(registronTests, "esto es idtests");
 
     console.log(req.body.descripcion, registronTests);
-    await registroRecomendacionModel(registronTests, req.body.descripcion);
-    // console.log(newtestB);
+    if (req.body.descripcion !== "") {
+      await registroRecomendacionModel(registronTests, req.body.descripcion);
+    }
+    console.log("Continuo bien");
 
     console.log(`este es el controlador y lo que obtuvo del modelo es`);
 
@@ -82,3 +79,6 @@ export const crearTestBruce = async (req, res) => {
     res.status(500).json({ mensaje: "Error del servidor", error: error });
   }
 };
+
+
+
