@@ -280,7 +280,7 @@ export const BruceOnePersonModel = async (idpersona) => {
 
     try {
       const bruceUser = await client.query(
-        `SELECT t3.idusuario, t2.fecha,  t1.elefinal,	t1.velocidadfinal,	t1.numeroetapa,	t1.vodos,	t1.saturacionvodos,	t1.tiempo
+        `SELECT t2.idtest, t3.idusuario, t2.fecha, t1.idetapa, t1.elefinal,	t1.velocidadfinal,	t1.numeroetapa,	t1.vodos,	t1.saturacionvodos,	t1.tiempo
         FROM tests AS t2 
         JOIN usuario AS t3 ON t2.idusuario = t3.idusuario 
         JOIN etapas AS t1 ON t2.fkbruce = t1.idetapa 
@@ -326,8 +326,8 @@ export const recomendacionesOneUserModel = async (idtests) => {
   } catch (error) {
     return {
       rp: "no",
-      error,
       mensaje: "No se pudo traer las recomendaciones",
+      error,
     };
   }
 };

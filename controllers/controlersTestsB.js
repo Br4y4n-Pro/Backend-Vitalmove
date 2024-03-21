@@ -85,18 +85,19 @@ export const allRecomendaciones = async (req, res) => {
 };
 
 export const recomendacionesOneUser = async (req, res) => {
-  const response = await recomendacionesOneUserModel(req.params.id);
-  console.log(response);
-  if (response === undefined) {
-    res.status(200).json({
-      mensaje: "No se encuentra ninguna recomendación con ese id de test",
-    });
-  }
   try {
+    const response = await recomendacionesOneUserModel(req.params.id);
+    console.log(response);
+    if (response === undefined) {
+      res.status(201).json({
+        rp: 'no',
+        descripcion: "No tiene ninguna recomendación en este test",
+      });
+    }
     res.status(200).json(response);
   } catch (error) {
     return res.status(203).json({
-      mensaje: "Error al traer la recomendación del usuario: ",
+      mensaje: "Error al traer la recomendación",
       rp: "no",
     });
   }
