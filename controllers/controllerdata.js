@@ -19,30 +19,33 @@ export const addUserNew = async (req, res) => {
   
   console.log("Recibiendo solicitud POST en addUserNew");
   const body = req.body;
-  console.log(body, "-------------------------", req.file);
-  const urlImagen = await uploadImagenS3Model(req.file);
-  console.log(urlImagen, "urlImagen");
   try {
-    const newUser = await addUserModel(body, urlImagen);
-    console.log("El id returning", newUser.rows[0].idusuario);
-    console.log(newUser.rowCount, newUser.command);
-    const historial = await crearHistorialUserModel(
-      body,
-      newUser.rows[0].idusuario
-    );
-    console.log(historial);
-    if (newUser === null) {
-      res.status(401).json({ error: "No se pudo crear el usuario" });
-    }
+    const newUser = await addUserModel(body, req.file);
+    console.log(newUser)
+    // console.log("El id returning", newUser.rows[0].idusuario);
+    // console.log(newUser.rowCount, newUser.command);
     if (newUser.rp === "no") {
-      res.status(203).json(newUser);
-    } else {
-      res
+      return res.status(203).json(newUser);
+    } 
+
+    if (newUser.rowCount !== 0) {
+      const historial = await crearHistorialUserModel(
+        body,
+        newUser.rows[0].idusuario
+        );
+
+        res
         .status(201)
         .json({ mensaje: "Usuario registrado exitosamente", rp: "si" });
+       
+    }
+// console.log('sigue normalmente para dar la rp');
+//  console.log('seconf')
+    if (newUser.rowCount === 0) {
+      res.status(401).json({ error: "No se pudo crear el usuario" });
     }
   } catch (error) {
-    res.status(500).json({ mensaje: "Error del servidor", error: error });
+    res.status(500).json({rp:'no', mensaje: "Error del servidor", error: error });
   }
 };
 

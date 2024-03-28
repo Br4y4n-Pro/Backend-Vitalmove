@@ -4,7 +4,7 @@ import pkg from "pg";
 const { Pool } = pkg;
 import { CONFIG_DB } from "../config/db.js";
 import bcrypt from "bcrypt";
-
+import { uploadImagenS3Model } from "../models/s3.js";
 const pool = new Pool(CONFIG_DB);
 
 // Prueba de conexion a la base de datos
@@ -18,7 +18,7 @@ export const getPgVersion = async () => {
   }
 };
 
-export const addUserModel = async (data, linkImagen) => {
+export const addUserModel = async (data, file) => {
   const {
     actividadsemana,
     alergias,
@@ -87,8 +87,21 @@ export const addUserModel = async (data, linkImagen) => {
     nombres,
   ];
 
+
+
   console.log("Valores requeridos ", requiredValues);
 
+const existeDNI = await validateDniExist(dni);
+
+  if (existeDNI) {
+    console.log(' Existe y retorno el mensaje')
+    return {
+      mensaje: `El número de dni ${dni} ya está registrado`,
+      rp: 'no',
+    };
+  }
+
+  console.log(validateDniExist(dni))
   if (requiredValues.some((value) => value == null || value === "")) {
     return {
       mensaje:
@@ -98,12 +111,10 @@ export const addUserModel = async (data, linkImagen) => {
   }
   console.log("llego");
 
-  if (await validateDniExist(dni)) {
-    return {
-      mensaje: `El número de dni ${dni} ya está registrado`,
-      rp: "no",
-    };
-  }
+
+console.log('siguio para la imagen')
+  const linkImagen = await uploadImagenS3Model(file);
+
   console.log("siguio");
   // uso de bcrypt para cifrar la contraseña
   console.log("hash");
@@ -189,7 +200,7 @@ export const loginUserModel = async (data) => {
     // console.log(dni);
     const client = await pool.connect(); // Conexión a la base de datos
 
-    if ((await validateDniExist(dni)) == null) {
+    if ((await validateDniExist(dni))=== null) {
       return {
         mensaje: "El DNI ingresado no está registrado",
         rp: "no",
@@ -372,22 +383,18 @@ export const updateUserModel = async (datos) => {
 //------------------------------------------------
 
 export const validateDniExist = async (dniToRegister) => {
-  console.log("entro");
-  const result = await pool.query("SELECT dni FROM usuario where dni = $1", [
-    dniToRegister,
-  ]);
-  console.log("Dni Existe", result.rows);
+
   try {
+    console.log("entro");
     const result = await pool.query("SELECT dni FROM usuario where dni = $1", [
       dniToRegister,
     ]);
-    console.log(result.rowCount);
     if (result.rows.length === 1) {
-      console.log(true);
+      console.log(true, 'el dni existe');
       return true;
     } else {
-      console.log(null);
-      return null; //no se encontro el dni
+      console.log(null, ' El dni no existe');
+      return false; //no se encontro el dni
     }
   } catch (error) {
     console.error("Error al obtener dni del usuario", error);

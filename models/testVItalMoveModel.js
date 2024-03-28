@@ -178,7 +178,7 @@ export const crearTestBruceModModel = async (data) => {
 };
 
 export const crearHistorialUserModel = async (data, idusuario) => {
-  console.log(data);
+  console.log(' Aqui ingresamos el historial del primer peso registrado ' , data);
   const resultados = calculoImc(data);
   console.log(resultados);
   const { imc, imcdescripcion, peso } = resultados;

@@ -11,4 +11,3 @@ export const CONFIG_DB = {
       require: true,
     }
 };
-
