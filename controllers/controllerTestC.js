@@ -4,6 +4,8 @@ import {
   registroRecomendacionModel,
   registroTestModel,
   regisTestModel,
+  getAllPublicacionesModel,
+  crearPublicacionModel,
 } from "../models/testVItalMoveModel.js";
 
 export const crearCaminata = async (req, res) => {
@@ -81,4 +83,34 @@ export const crearTestBruce = async (req, res) => {
 };
 
 
+export const getAllPublicaciones = async (req,res)=>{
+  try {
+    const publicaciones = await getAllPublicacionesModel()
+    console.log(publicaciones)
+    if (publicaciones.rowCount === 0) {
+     return res.status(200).json({mensaje: 'No hay ninguna Publicación'})
+    }
+   return res.status(200).json(publicaciones.rows)
 
+  } catch (error) {
+   throw error
+  
+  }
+
+}
+
+export const crearPublicacion = (req,res) =>{
+  const body = req.body
+  const imagen = req.file
+  console.log(req.body);
+  console.log(req.file);
+  const nuevaPublicacion = crearPublicacionModel(body,imagen)
+  try {
+    
+
+
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error del servidor", error: error });
+
+  }
+}

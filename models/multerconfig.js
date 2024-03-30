@@ -40,3 +40,6 @@ export const uploadBuffer = multer({ storage: storageBuffer }).single(
   "imgperfil"
 );
 
+export const uploadBufferPublicaciones = multer({ storage: storageBuffer }).single(
+  "imagen"
+);

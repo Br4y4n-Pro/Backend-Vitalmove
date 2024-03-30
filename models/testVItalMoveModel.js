@@ -1,9 +1,8 @@
-import dotenv from "dotenv";
 import pkg from "pg";
 import { CONFIG_DB } from "../config/db.js";
 import { calculoImc, selecionarEtapa } from "../utils/utils.js";
+import { uploadImagenS3Model } from "./s3.js";
 // Configurar variables de entorno desde el archivo .env
-dotenv.config();
 
 const { Pool } = pkg;
 const pool = new Pool(CONFIG_DB);
@@ -331,3 +330,31 @@ export const recomendacionesOneUserModel = async (idtests) => {
     };
   }
 };
+
+export const getAllPublicacionesModel = async () =>{
+try {
+ const result = await pool.query('SELECT * FROM publicaciones');
+return result
+} catch (error) {
+  throw error
+}
+} 
+
+
+export const crearPublicacionModel = async(body,imagen)=>{
+    const linkImagen = ''
+
+    const {titulo, recomendacion} = body
+  if (imagen !== '') {
+    const linkImagen = uploadImagenS3Model(imagen);
+  }
+
+  try {
+    const result = pool.query('INSERT INTO publicaciones (titulo,recomendacion,imagen) VALUES($1,$2,$3)' ,[titulo,recomendacion,linkImagen])
+      console.log(result.rows)
+  } catch (error) {
+    console.log(error)
+  }
+
+
+}

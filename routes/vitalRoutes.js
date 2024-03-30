@@ -11,7 +11,7 @@ import {
   getUserInfo,
   loginHistorial,
 } from "../controllers/controllerdata.js";
-import { uploadDisk, uploadBuffer } from "../models/multerconfig.js";
+import { uploadDisk, uploadBuffer, uploadBufferPublicaciones } from "../models/multerconfig.js";
 import {
   BruceOnePerson,
   allRecomendaciones,
@@ -24,7 +24,9 @@ import {
 } from "../controllers/controlersTestsB.js";
 import {
   crearCaminata,
+  crearPublicacion,
   crearTestBruce,
+  getAllPublicaciones,
 } from "../controllers/controllerTestC.js";
 import { crearHistorialUserModel } from "../models/testVItalMoveModel.js";
 const router = express.Router();
@@ -60,6 +62,8 @@ router.get("/allBruce/:id", BruceOnePerson);
 router.post("/crearTestBruce", crearTestBruce);
 
 router.get("/allRecomendaciones", allRecomendaciones);
-router.get('/allRecomendaciones/:id',recomendacionesOneUser)
+router.get('/allRecomendaciones/:id',recomendacionesOneUser);
 
+router.get('/allPublicaciones',getAllPublicaciones);
+router.post('/crearPublicacion',uploadBufferPublicaciones, crearPublicacion)
 export default router;

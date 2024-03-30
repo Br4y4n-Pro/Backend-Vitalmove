@@ -1,5 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
 import pkg from "pg";
 const { Pool } = pkg;
 import { CONFIG_DB } from "../config/db.js";
@@ -101,7 +99,6 @@ const existeDNI = await validateDniExist(dni);
     };
   }
 
-  console.log(validateDniExist(dni))
   if (requiredValues.some((value) => value == null || value === "")) {
     return {
       mensaje:
@@ -113,8 +110,9 @@ const existeDNI = await validateDniExist(dni);
 
 
 console.log('siguio para la imagen')
+console.log(file)
   const linkImagen = await uploadImagenS3Model(file);
-
+console.log(linkImagen)
   console.log("siguio");
   // uso de bcrypt para cifrar la contraseña
   console.log("hash");

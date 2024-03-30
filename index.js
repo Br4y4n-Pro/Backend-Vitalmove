@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import Express from "express";
 const app = Express();
 
@@ -9,7 +11,6 @@ import { publicPath } from "./models/multerconfig.js";
 import yaml from "js-yaml";
 import fs from "fs";
 import swaggerUi from "swagger-ui-express";
-
 app.use("/public", Express.static(publicPath));
 app.use(cors());
 app.use(bodyParser.json());

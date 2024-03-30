@@ -20,6 +20,7 @@ export const addUserNew = async (req, res) => {
   console.log("Recibiendo solicitud POST en addUserNew");
   const body = req.body;
   try {
+    console.log(req.file)
     const newUser = await addUserModel(body, req.file);
     console.log(newUser)
     // console.log("El id returning", newUser.rows[0].idusuario);
@@ -45,6 +46,7 @@ export const addUserNew = async (req, res) => {
       res.status(401).json({ error: "No se pudo crear el usuario" });
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json({rp:'no', mensaje: "Error del servidor", error: error });
   }
 };
@@ -165,9 +167,16 @@ export const searchUsers = async (req, res) => {
 };
 
 export const prueba = async (req, res) => {
+try {
   const urlImagen = await uploadImagenS3Model(req.file);
-
-  res.status(200).json({ url: urlImagen });
+if (urlImagen !== '') {
+  return res.status(200).json(urlImagen)
+}else{
+  return res.status(201).json(urlImagen, ' Esta vacio')
+}
+} catch (e) {
+console.log(e)  
+}
 };
 
 export const HistorialNewUser = async (req, res) => {
