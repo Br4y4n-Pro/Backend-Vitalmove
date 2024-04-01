@@ -5,10 +5,6 @@ import * as path from "path";
 
 // AWS S3 ///////////////////////////////////////////////////
 // CONFIGURAR S3
-   console.log(process.env.AWS_ACCESS_KEY_ID)
-  console.log(process.env.AWS_SECRET_ACCESS_KEY)
-
-
 // RENOMBRAR LA IMAGEN A SUBIR
 export const uploadImagenS3Model = async (file) => {
   const bucket = 'vitalmoveimages';

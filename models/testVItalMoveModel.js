@@ -352,6 +352,7 @@ export const crearPublicacionModel = async(body,imagen)=>{
   try {
     const result = pool.query('INSERT INTO publicaciones (titulo,recomendacion,imagen) VALUES($1,$2,$3)' ,[titulo,recomendacion,linkImagen])
       console.log(result.rows)
+      
   } catch (error) {
     console.log(error)
   }

@@ -1,3 +1,4 @@
+import e from "express";
 import {
   crearTestBruceModModel,
   crearTestCaminataModel,
@@ -93,8 +94,8 @@ export const getAllPublicaciones = async (req,res)=>{
    return res.status(200).json(publicaciones.rows)
 
   } catch (error) {
+    console.log(error)
    throw error
-  
   }
 
 }
@@ -104,8 +105,8 @@ export const crearPublicacion = (req,res) =>{
   const imagen = req.file
   console.log(req.body);
   console.log(req.file);
-  const nuevaPublicacion = crearPublicacionModel(body,imagen)
   try {
+    const nuevaPublicacion = crearPublicacionModel(body,imagen)
     
 
 
