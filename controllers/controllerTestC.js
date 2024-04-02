@@ -3,15 +3,16 @@ import {
   crearTestBruceModModel,
   crearTestCaminataModel,
   registroRecomendacionModel,
-  registroTestModel,
-  regisTestModel,
   getAllPublicacionesModel,
   crearPublicacionModel,
+  registroTestCaminaModel,
+  registroTestBruceModel,
 } from "../models/testVItalMoveModel.js";
 
 export const crearCaminata = async (req, res) => {
+  let registronTests;
   try {
-    // console.log(req.body);
+    console.log(req.body);
 
     const caminatadata = await crearTestCaminataModel(req.body);
 
@@ -20,17 +21,26 @@ export const crearCaminata = async (req, res) => {
 
     console.log("ca", idcaminata, idusuario);
 
-    const registronTests = await registroTestModel(idcaminata, idusuario);
+    if (caminatadata.rowCount === 1) {
+       registronTests = await registroTestCaminaModel(idcaminata, idusuario);
+
+    }
+
     console.log(registronTests, "esto es idtests");
 
     console.log(req.body.descripcion, registronTests);
     if (req.body.descripcion !== "") {
-      await registroRecomendacionModel(registronTests, req.body.descripcion);
+      console.log('first?????')
+      try {
+        await registroRecomendacionModel(registronTests, req.body.descripcion);
+      } catch (e) {
+        console.log(e);
+      }
     }
     if (caminatadata.rowCount === 1) {
       res
         .status(200)
-        .json({ ...req.body, rp: "si", mensaje: "Registro de test exitoso" });
+        .json({ barevodos: caminatadata.barevodos, rp: "si", mensaje: "Registro de test exitoso" });
     } else {
       res.status(203).json({
         mensaje: "Error no se pudo ingresar el test",
@@ -55,10 +65,14 @@ export const crearTestBruce = async (req, res) => {
 
     // console.log("bruce ", idetapa, idusuario);
 
-    const registronTests = await regisTestModel(idetapa, idusuario);
+    const registronTests = await registroTestBruceModel(idetapa, idusuario);
     console.log(registronTests, "esto es idtests");
 
-    console.log(req.body.descripcion, registronTests);
+    console.log(
+      req.body.descripcion,
+      registronTests,
+      " va a ver si hay recomendacion"
+    );
     if (req.body.descripcion !== "") {
       await registroRecomendacionModel(registronTests, req.body.descripcion);
     }
@@ -83,35 +97,28 @@ export const crearTestBruce = async (req, res) => {
   }
 };
 
-
-export const getAllPublicaciones = async (req,res)=>{
+export const getAllPublicaciones = async (req, res) => {
   try {
-    const publicaciones = await getAllPublicacionesModel()
-    console.log(publicaciones)
+    const publicaciones = await getAllPublicacionesModel();
+    console.log(publicaciones);
     if (publicaciones.rowCount === 0) {
-     return res.status(200).json({mensaje: 'No hay ninguna Publicación'})
+      return res.status(200).json({ mensaje: "No hay ninguna Publicación" });
     }
-   return res.status(200).json(publicaciones.rows)
-
+    return res.status(200).json(publicaciones.rows);
   } catch (error) {
-    console.log(error)
-   throw error
+    console.log(error);
+    throw error;
   }
+};
 
-}
-
-export const crearPublicacion = (req,res) =>{
-  const body = req.body
-  const imagen = req.file
+export const crearPublicacion = (req, res) => {
+  const body = req.body;
+  const imagen = req.file;
   console.log(req.body);
   console.log(req.file);
   try {
-    const nuevaPublicacion = crearPublicacionModel(body,imagen)
-    
-
-
+    const nuevaPublicacion = crearPublicacionModel(body, imagen);
   } catch (error) {
     res.status(500).json({ mensaje: "Error del servidor", error: error });
-
   }
-}
+};

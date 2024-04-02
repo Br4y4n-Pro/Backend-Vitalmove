@@ -28,20 +28,29 @@ export const crearTestCaminataModel = async (data) => {
     barevodos = "Bueno";
   }
   console.log(barevodos);
+try {
   const query =
-    "INSERT INTO caminata (fcr, tiempo, distancia, fcm, consumovo2,barevodos) VALUES ($1, $2, $3, $4,$5,$6) RETURNING idcaminata";
-  const values = [fcr, tiempo, distancia, fcm, Consumov, barevodos];
-  console.log(fcr, tiempo, distancia, fcm, Consumov, barevodos);
-  const res = await pool.query(query, values);
-  // console.log("res  em modelo", res);
-  return res;
+  "INSERT INTO caminata (fcr, tiempo, distancia, fcm, consumovo2,barevodos) VALUES ($1, $2, $3, $4,$5,$6) RETURNING idcaminata";
+const values = [fcr, tiempo, distancia, fcm, Consumov, barevodos];
+console.log(fcr, tiempo, distancia, fcm, Consumov, barevodos);
+const res = await pool.query(query, values);
+console.log("res  em modelo", res);
+if (res.rowCount === 1) {
+  return { ...res,barevodos: barevodos};
+}
+return {mensaje: 'Error al registrar Caminata', rp:'no'}
+
+} catch (error) {
+  console.log(error)
+  throw error
+}
 };
 
-export const registroTestModel = async (idtets, idusuario) => {
+export const registroTestCaminaModel = async (idtets, idusuario) => {
   console.log(idtets, idusuario);
   try {
     const query =
-      "INSERT INTO tests (fkcaminata,idusuario,fkbruce) VALUES ($1,$2,$3) RETURNING idtest";
+      "INSERT INTO tests (fkcaminata,idusuario) VALUES ($1,$2) RETURNING idtest";
     const result = await pool.query(query, [idtets, idusuario]);
     console.log(result.rows[0]);
     return result.rows[0].idtest;
@@ -49,6 +58,20 @@ export const registroTestModel = async (idtets, idusuario) => {
     return { rp: "no", error, mensaje: "Error al insertar en la tabla tests" };
   }
 };
+
+export const registroTestBruceModel = async (idtets, idusuario) => {
+  console.log(idtets, idusuario);
+  try {
+    const query =
+      "INSERT INTO tests (fkbruce,idusuario) VALUES ($1,$2) RETURNING idtest";
+    const result = await pool.query(query, [idtets, idusuario]);
+    console.log(result.rows[0]);
+    return result.rows[0].idtest;
+  } catch (e) {
+    return { rp: "no", error, mensaje: "Error al insertar en la tabla tests" };
+  }
+};
+
 
 export const regisTestModel = async (idtets, idusuario) => {
   console.log(idtets, idusuario);
