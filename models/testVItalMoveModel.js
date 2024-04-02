@@ -28,22 +28,21 @@ export const crearTestCaminataModel = async (data) => {
     barevodos = "Bueno";
   }
   console.log(barevodos);
-try {
-  const query =
-  "INSERT INTO caminata (fcr, tiempo, distancia, fcm, consumovo2,barevodos) VALUES ($1, $2, $3, $4,$5,$6) RETURNING idcaminata";
-const values = [fcr, tiempo, distancia, fcm, Consumov, barevodos];
-console.log(fcr, tiempo, distancia, fcm, Consumov, barevodos);
-const res = await pool.query(query, values);
-console.log("res  em modelo", res);
-if (res.rowCount === 1) {
-  return { ...res,barevodos: barevodos};
-}
-return {mensaje: 'Error al registrar Caminata', rp:'no'}
-
-} catch (error) {
-  console.log(error)
-  throw error
-}
+  try {
+    const query =
+      "INSERT INTO caminata (fcr, tiempo, distancia, fcm, consumovo2,barevodos) VALUES ($1, $2, $3, $4,$5,$6) RETURNING idcaminata";
+    const values = [fcr, tiempo, distancia, fcm, Consumov, barevodos];
+    console.log(fcr, tiempo, distancia, fcm, Consumov, barevodos);
+    const res = await pool.query(query, values);
+    console.log("res  em modelo", res);
+    if (res.rowCount === 1) {
+      return { ...res, barevodos: barevodos };
+    }
+    return { mensaje: "Error al registrar Caminata", rp: "no" };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 export const registroTestCaminaModel = async (idtets, idusuario) => {
@@ -71,7 +70,6 @@ export const registroTestBruceModel = async (idtets, idusuario) => {
     return { rp: "no", error, mensaje: "Error al insertar en la tabla tests" };
   }
 };
-
 
 export const regisTestModel = async (idtets, idusuario) => {
   console.log(idtets, idusuario);
@@ -136,7 +134,7 @@ export const caminataOnePersonModel = async (idpersona) => {
 
     try {
       const caminataUser = await client.query(
-        `SELECT t3.idusuario, t2.fecha, t1.fcr, t1.tiempo, t1.distancia, t1.consumovo2, t1.barevodos, t1.fcm 
+        `SELECT t2.idtest, t3.idusuario, t2.fecha, t1.fcr, t1.tiempo, t1.distancia, t1.consumovo2, t1.barevodos, t1.fcm, t1.idcaminata
         FROM tests AS t2 
         JOIN usuario AS t3 ON t2.idusuario = t3.idusuario 
         JOIN caminata AS t1 ON t2.fkcaminata = t1.idcaminata 
@@ -200,7 +198,10 @@ export const crearTestBruceModModel = async (data) => {
 };
 
 export const crearHistorialUserModel = async (data, idusuario) => {
-  console.log(' Aqui ingresamos el historial del primer peso registrado ' , data);
+  console.log(
+    " Aqui ingresamos el historial del primer peso registrado ",
+    data
+  );
   const resultados = calculoImc(data);
   console.log(resultados);
   const { imc, imcdescripcion, peso } = resultados;
@@ -289,7 +290,11 @@ export const registroRecomendacionModel = async (idtests, descripcion) => {
   try {
     // Ejecutar la consulta y enviar los datos a la tabla historial
     const res = await pool.query(query, values);
-    return { mensaje: "Se registro exitosamente", rp: "si" };
+    if (res.rowCount === 1) {
+      return { mensaje: "Se registro exitosamente", rp: "si" };
+    }
+    console.log(res);
+    return { mensaje: "error" };
   } catch (error) {
     console.error("Error al insertar datos en historial:", error);
     throw error; // Propagar el error para que sea manejado por quien llame a esta función
@@ -354,31 +359,30 @@ export const recomendacionesOneUserModel = async (idtests) => {
   }
 };
 
-export const getAllPublicacionesModel = async () =>{
-try {
- const result = await pool.query('SELECT * FROM publicaciones');
-return result
-} catch (error) {
-  throw error
-}
-} 
+export const getAllPublicacionesModel = async () => {
+  try {
+    const result = await pool.query("SELECT * FROM publicaciones");
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
 
+export const crearPublicacionModel = async (body, imagen) => {
+  const linkImagen = "";
 
-export const crearPublicacionModel = async(body,imagen)=>{
-    const linkImagen = ''
-
-    const {titulo, recomendacion} = body
-  if (imagen !== '') {
+  const { titulo, recomendacion } = body;
+  if (imagen !== "") {
     const linkImagen = uploadImagenS3Model(imagen);
   }
 
   try {
-    const result = pool.query('INSERT INTO publicaciones (titulo,recomendacion,imagen) VALUES($1,$2,$3)' ,[titulo,recomendacion,linkImagen])
-      console.log(result.rows)
-      
+    const result = pool.query(
+      "INSERT INTO publicaciones (titulo,recomendacion,imagen) VALUES($1,$2,$3)",
+      [titulo, recomendacion, linkImagen]
+    );
+    console.log(result.rows);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-
-
-}
+};

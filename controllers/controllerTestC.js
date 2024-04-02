@@ -1,4 +1,3 @@
-import e from "express";
 import {
   crearTestBruceModModel,
   crearTestCaminataModel,
@@ -21,7 +20,7 @@ export const crearCaminata = async (req, res) => {
 
     console.log("ca", idcaminata, idusuario);
 
-    if (caminatadata.rowCount === 1) {
+    if (caminatadata.rowCount >= 1) {
        registronTests = await registroTestCaminaModel(idcaminata, idusuario);
 
     }
