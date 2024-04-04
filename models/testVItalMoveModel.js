@@ -369,18 +369,29 @@ export const getAllPublicacionesModel = async () => {
 };
 
 export const crearPublicacionModel = async (body, imagen) => {
-  const linkImagen = "";
-
+ console.log(imagen)
   const { titulo, recomendacion } = body;
-  if (imagen !== "") {
-    const linkImagen = uploadImagenS3Model(imagen);
-  }
+    console.log('si entro :)')
+   const linkImagen = await uploadImagenS3Model(imagen);
+  console.log(linkImagen)
 
   try {
-    const result = pool.query(
+    console.log('first')
+    const result = await pool.query(
       "INSERT INTO publicaciones (titulo,recomendacion,imagen) VALUES($1,$2,$3)",
       [titulo, recomendacion, linkImagen]
     );
+    console.log(result)
+      if (result.rowCount == 1 ) {
+        return{
+          mensaje: 'Se publico correctamente',
+          rp: 'si'
+        }
+      }
+      return{
+        mensaje: 'No se publico correctamente',
+        rp: 'no'
+      }
     console.log(result.rows);
   } catch (error) {
     console.log(error);
