@@ -110,13 +110,18 @@ export const getAllPublicaciones = async (req, res) => {
   }
 };
 
-export const crearPublicacion = (req, res) => {
+export const crearPublicacion = async (req, res) => {
   const body = req.body;
   const imagen = req.file;
   console.log(req.body);
   console.log(req.file);
-  try {
-    const nuevaPublicacion = crearPublicacionModel(body, imagen);
+  try { 
+    const nuevaPublicacion = await crearPublicacionModel(body, imagen);
+    console.log(nuevaPublicacion)
+    if (nuevaPublicacion.rp === 'si'){
+      return res.status(200).json(nuevaPublicacion)
+    }
+    return res.status(203).json(nuevaPublicacion)
   } catch (error) {
     res.status(500).json({ mensaje: "Error del servidor", error: error });
   }
