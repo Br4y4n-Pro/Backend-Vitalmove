@@ -1,84 +1,108 @@
-CREATE TABLE caminata (
+-- CREATE TABLE statements
+CREATE TABLE public.caminata (
     idcaminata SERIAL PRIMARY KEY,
-    fcr numeric,
-    tiempo numeric,
-    distancia numeric,
-    consumovo2 numeric,
-    barevodos character varying,
-    fcm numeric
+    fcr NUMERIC NOT NULL,
+    tiempo NUMERIC NOT NULL,
+    distancia NUMERIC NOT NULL,
+    consumovo2 NUMERIC,
+    barevodos TEXT NOT NULL,
+    fcm NUMERIC
 );
 
-CREATE TABLE etapas (
-    tiempo numeric,
-    saturacionvodos numeric,
-    vodos double precision,
-    fcm numeric,
-    fcr numeric,
-    numeroetapa integer,
-    velocidadfinal numeric,
-    elefinal numeric,
-    idetapa SERIAL PRIMARY KEY
+CREATE TABLE public.etapas (
+    idetapa SERIAL PRIMARY KEY,
+    elefinal NUMERIC NOT NULL,
+    velocidadfinal NUMERIC NOT NULL,
+    numeroetapa INTEGER NOT NULL,
+    vodos DOUBLE PRECISION NOT NULL,
+    saturacionvodos NUMERIC,
+    tiempo NUMERIC
 );
 
-CREATE TABLE historial (
+CREATE TABLE public.historial (
     idhistorial SERIAL PRIMARY KEY,
-    fecha date DEFAULT CURRENT_DATE,
-    peso numeric,
-    bareimc integer,
-    imc numeric,
-    imcdescripcion character varying,
-    idusuario integer
+    fecha DATE DEFAULT CURRENT_DATE NOT NULL,
+    peso NUMERIC NOT NULL,
+    idusuario INTEGER NOT NULL,
+    imc NUMERIC,
+    imcdescripcion VARCHAR(50),
+    FOREIGN KEY (idusuario) REFERENCES public.usuario(idusuario)
 );
 
-CREATE TABLE notadiaria (
-    descripcion text,
-    id SERIAL PRIMARY KEY
+CREATE TABLE public.notasdiarias (
+    idnota SERIAL PRIMARY KEY,
+    descripcion TEXT
 );
 
-CREATE TABLE recomendaciones (
-    idhistorial integer,
-    descripcion character varying,
-    idrecomendacion integer,
-    idtests integer
+CREATE TABLE public.publicaciones (
+    idpublicacion SERIAL PRIMARY KEY,
+    imagen TEXT,
+    recomendacion TEXT,
+    fecha DATE DEFAULT CURRENT_DATE,
+    titulo TEXT
 );
 
-CREATE TABLE tests (
-    idusuario integer,
-    fkcaminata integer,
-    fkbruce integer,
-    fecha date DEFAULT CURRENT_DATE,
-    idtest SERIAL PRIMARY KEY
+CREATE TABLE public.recomendaciones (
+    idrecomendacion SERIAL PRIMARY KEY,
+    descripcion VARCHAR NOT NULL,
+    idhistorial INTEGER,
+    idtests INTEGER,
+    FOREIGN KEY (idhistorial) REFERENCES public.historial(idhistorial),
+    FOREIGN KEY (idtests) REFERENCES public.tests(idtest)
 );
 
-CREATE TABLE usuario (
-    nombres character varying,
-    apellidos character varying,
-    genero character varying,
-    direccion character varying,
-    dependencia character varying,
-    fechanacimiento date,
-    talla numeric,
-    rh character varying,
-    nombreemergencia character varying,
-    parentesco character varying,
-    telefonoemergencia character varying,
-    eps character varying,
-    alergias character varying,
-    contrasena character varying,
-    actividadsemana integer,
-    nivelsemana character varying,
-    imgperfil character varying,
-    rol integer DEFAULT 0,
-    grupo character varying,
-    dni character varying,
-    idusuario SERIAL PRIMARY KEY
+CREATE TABLE public.tests (
+    idtest SERIAL PRIMARY KEY,
+    fecha DATE DEFAULT CURRENT_DATE NOT NULL,
+    fkbruce INTEGER,
+    fkcaminata INTEGER,
+    idusuario INTEGER,
+    FOREIGN KEY (fkcaminata) REFERENCES public.caminata(idcaminata),
+    FOREIGN KEY (fkbruce) REFERENCES public.etapas(idetapa),
+    FOREIGN KEY (idusuario) REFERENCES public.usuario(idusuario)
 );
 
--- RELACIONES entre tests y respectivo padre xD
-ALTER TABLE tests ADD CONSTRAINT fketapastests FOREIGN KEY (fkbruce) REFERENCES etapas(idetapa);
-ALTER TABLE tests ADD CONSTRAINT fk_caminata FOREIGN KEY (fkcaminata) REFERENCES caminata(idcaminata);
-ALTER TABLE tests ADD CONSTRAINT fkbruce FOREIGN KEY (fkbruce) REFERENCES etapas(idetapa);
--- Relación entre historial y usuario
-ALTER TABLE historial ADD CONSTRAINT fk_usuario_historial FOREIGN KEY (idusuario) REFERENCES usuario(idusuario);
--- Relación entre tests y usuario
-ALTER TABLE tests ADD CONSTRAINT fk_usuario_tests FOREIGN KEY (idusuario) REFERENCES usuario(idusuario);
+CREATE TABLE public.usuario (
+    idusuario SERIAL PRIMARY KEY,
+    dni TEXT NOT NULL,
+    nombres VARCHAR(50) NOT NULL,
+    apellidos VARCHAR NOT NULL,
+    genero VARCHAR(100) NOT NULL,
+    direccion VARCHAR(100) NOT NULL,
+    dependencia VARCHAR(100) NOT NULL,
+    fechanacimiento DATE NOT NULL,
+    talla NUMERIC NOT NULL,
+    rh VARCHAR NOT NULL,
+    nombreemergencia VARCHAR NOT NULL,
+    parentesco VARCHAR NOT NULL,
+    telefonoemergencia VARCHAR NOT NULL,
+    eps VARCHAR NOT NULL,
+    alergias VARCHAR DEFAULT 'Ninguno' NOT NULL,
+    contrasena VARCHAR NOT NULL,
+    actividadsemana INTEGER NOT NULL,
+    nivelsemana VARCHAR,
+    imgperfil VARCHAR,
+    rol INTEGER DEFAULT 0 NOT NULL,
+    grupo VARCHAR(100),
+    peso NUMERIC
+);
+
+-- ALTER SEQUENCE statements
+ALTER SEQUENCE public.caminata_idcaminata_seq OWNED BY public.caminata.idcaminata;
+ALTER SEQUENCE public.etapas_idetapa_seq OWNED BY public.etapas.idetapa;
+ALTER SEQUENCE public.historial_idhistorial_seq OWNED BY public.historial.idhistorial;
+ALTER SEQUENCE public.notasdiarias_idnota_seq OWNED BY public.notasdiarias.idnota;
+ALTER SEQUENCE public.publicaciones_idpublicacion_seq OWNED BY public.publicaciones.idpublicacion;
+ALTER SEQUENCE public.recomendaciones_idrecomendacion_seq OWNED BY public.recomendaciones.idrecomendacion;
+ALTER SEQUENCE public.tests_idtest_seq OWNED BY public.tests.idtest;
+ALTER SEQUENCE public.usuario_idusuario_seq OWNED BY public.usuario.idusuario;
+
+-- ALTER TABLE DEFAULT statements
+ALTER TABLE ONLY public.caminata ALTER COLUMN idcaminata SET DEFAULT nextval('public.caminata_idcaminata_seq');
+ALTER TABLE ONLY public.etapas ALTER COLUMN idetapa SET DEFAULT nextval('public.etapas_idetapa_seq');
+ALTER TABLE ONLY public.historial ALTER COLUMN idhistorial SET DEFAULT nextval('public.historial_idhistorial_seq');
+ALTER TABLE ONLY public.notasdiarias ALTER COLUMN idnota SET DEFAULT nextval('public.notasdiarias_idnota_seq');
+ALTER TABLE ONLY public.publicaciones ALTER COLUMN idpublicacion SET DEFAULT nextval('public.publicaciones_idpublicacion_seq');
+ALTER TABLE ONLY public.recomendaciones ALTER COLUMN idrecomendacion SET DEFAULT nextval('public.recomendaciones_idrecomendacion_seq');
+ALTER TABLE ONLY public.tests ALTER COLUMN idtest SET DEFAULT nextval('public.tests_idtest_seq');
+ALTER TABLE ONLY public.usuario ALTER COLUMN idusuario SET DEFAULT nextval('public.usuario_idusuario_seq');

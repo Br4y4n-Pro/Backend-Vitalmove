@@ -165,9 +165,28 @@ export const crearTestBruceModModel = async (data) => {
   // console.log(typeof etapa);
   // numeroetapa
   const dt1 = selecionarEtapa(etapas);
+  let barevodos = "";
 
   const { velocidad, grados, tiempo, vodos, etapa } = dt1;
   // console.log(dt1);
+
+  // Ejemplo básico de inserción (recuerda manejar errores adecuadamente)
+  // console.log("Modelo", data);
+
+  const Consumov = (0.1 * (distancia / tiempo) + 3.5).toFixed(2);
+  // console.log(Consumov);
+  if (Consumov <= 10.99) {
+    // console.log("aqui");
+    barevodos = "Bajo";
+  } else if (Consumov >= 16.01) {
+    // console.log("aca");
+    barevodos = "Excelente";
+  } else {
+    // console.log("DONDE ");|
+    barevodos = "Bueno";
+  }
+  console.log(barevodos);
+
   const query =
     "INSERT INTO etapas (elefinal, velocidadfinal, numeroetapa, vodos, saturacionvodos, tiempo) VALUES ($1, $2, $3, $4, $5, $6)RETURNING idetapa";
 
