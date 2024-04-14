@@ -14,12 +14,14 @@ import {
 import { uploadDisk, uploadBuffer, uploadBufferPublicaciones } from "../models/multerconfig.js";
 import {
   BruceOnePerson,
+  allPeso,
   allRecomendaciones,
   caminataOnePerson,
   getAllBruceTests,
   getAllCaminataTests,
   mesRealizo,
   notasDiarias,
+  pesoOnePerson,
   recomendacionesOneUser,
 } from "../controllers/controlersTestsB.js";
 import {
@@ -66,4 +68,8 @@ router.get('/allRecomendaciones/:id',recomendacionesOneUser);
 
 router.get('/allPublicaciones',getAllPublicaciones);
 router.post('/crearPublicacion',uploadBufferPublicaciones, crearPublicacion)
+
+router.get('/allPeso',allPeso)
+router.get('/allPeso/:id',pesoOnePerson)
+
 export default router;

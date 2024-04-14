@@ -7,6 +7,8 @@ import {
   mesRealizoModel,
   notasDiariasModel,
   recomendacionesOneUserModel,
+  allPesoModel,
+  pesoOnePersonModel
 } from "../models/testVItalMoveModel.js";
 
 export const getAllCaminataTests = async (req, res) => {
@@ -103,4 +105,34 @@ export const recomendacionesOneUser = async (req, res) => {
   }
 };
 
+export const allPeso = async (req,res) =>{
+  try {
+    const allPeso = await allPesoModel();
+    res.status(200).json(allPeso);
+  } catch (error) {
+    return res.status(203).json({
+      mensaje: "Error al traer todos las caminatas: ",
+      rp: "no",
+    });
+  }
 
+};
+
+export const pesoOnePerson = async (req,res) => {
+  try {
+    const response = await pesoOnePersonModel(req.params.id);
+    console.log(response);
+    if (response === undefined) {
+      res.status(201).json({
+        rp: 'no',
+        descripcion: "No tiene ningún peso registrado",
+      });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    return res.status(203).json({
+      mensaje: "Error al traer la recomendación",
+      rp: "no",
+    });
+  }
+};

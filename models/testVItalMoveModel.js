@@ -2,6 +2,7 @@ import pkg from "pg";
 import { CONFIG_DB } from "../config/db.js";
 import { calculoImc, selecionarEtapa } from "../utils/utils.js";
 import { uploadImagenS3Model } from "./s3.js";
+import e from "express";
 // Configurar variables de entorno desde el archivo .env
 
 const { Pool } = pkg;
@@ -217,10 +218,15 @@ export const crearTestBruceModModel = async (data) => {
 };
 
 export const crearHistorialUserModel = async (data, idusuario) => {
+  let idUsuario = idusuario
   console.log(
     " Aqui ingresamos el historial del primer peso registrado ",
     data
   );
+if (idUsuario === null) {
+  idUsuario = data.idUsuario
+}
+
   const resultados = calculoImc(data);
   console.log(resultados);
   const { imc, imcdescripcion, peso } = resultados;
@@ -228,12 +234,12 @@ export const crearHistorialUserModel = async (data, idusuario) => {
   // Preparar la consulta SQL para insertar en la tabla historial
   const query =
     "INSERT INTO historial (peso, imc, imcdescripcion,idusuario) VALUES ($1, $2, $3, $4)";
-  const values = [peso, imc, imcdescripcion, idusuario];
+  const values = [peso, imc, imcdescripcion, idUsuario];
 
   try {
     // Ejecutar la consulta y enviar los datos a la tabla historial
     const res = await pool.query(query, values);
-    console.log("Res en modelo", res);
+    console.log("Res en modelo crearhistorial", res);
     return { mensaje: "Se registro exitosamente", rp: "si" };
   } catch (error) {
     console.error("Error al insertar datos en historial:", error);
@@ -307,7 +313,6 @@ export const registroRecomendacionModel = async (idtests, descripcion) => {
   const values = [descripcion, idtests];
 
   try {
-    // Ejecutar la consulta y enviar los datos a la tabla historial
     const res = await pool.query(query, values);
     if (res.rowCount === 1) {
       return { mensaje: "Se registro exitosamente", rp: "si" };
@@ -416,3 +421,43 @@ export const crearPublicacionModel = async (body, imagen) => {
     console.log(error);
   }
 };
+
+// PESO
+export const allPesoModel = async () =>{
+try {
+  const result = await pool.query('SELECT * FROM historial');
+
+  if (result.rowCount > 0) {
+    return result.rows
+  }
+  return {
+    rp: 'no',
+    mensaje: 'No hay ningún registro actualmente'
+  }
+} catch (e) {
+  console.log(e)
+  return e
+}
+};
+
+export const pesoOnePersonModel = async (idusuario) => {
+try {
+const result = await pool.query('SELECT * FROM historial WHERE idusuario = $1',[parseInt(idusuario)]);
+  if (result.rowCount > 0) {
+    return result.rows
+  }
+  console.log(result)
+  return {
+    rp: 'no',
+    mensaje : 'No se encontró ningún peso con este id'
+  }
+} catch (e) {
+  console.log(e)
+  return e
+}
+};
+
+
+// const actualizarPeso = (idusuario) =>{
+
+// }
